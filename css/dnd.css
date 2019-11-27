@@ -1,0 +1,79 @@
+/*
+
+DND 5
+
+*/
+
+/*
+#3b3126
+#fffefb
+#edd9b4
+#473d32
+#efe9d1
+#58180d
+#faf7ea
+*/
+
+.h2-dnd {
+	color: var(--color-dark-red);
+}
+
+.h3-dnd {
+	color: var(--color-dark-red);
+	border-bottom: 1px solid var(--color-dark-red);
+}
+
+.hr-dnd {
+	margin: 0.5rem 0;
+	width: 0;
+	height: 0;
+	border-style: solid;
+	border-width: 5px 0 5px 300px;
+	border-color: transparent transparent transparent var(--color-dark-red);
+}
+
+.initiative-tracker {
+	display: flex;
+	flex-flow: column nowrap;
+	align-items: stretch;
+}
+.initiative-item {
+	min-height: 50px;
+	display: flex;
+	flex-flow: row nowrap;
+	align-items: center;
+}
+.initiative-item-active {
+	outline: 3px solid dodgerblue;
+}
+.initiative-item-ally {
+	border: 3px solid green;
+	border-left-width: 15px;
+}
+.initiative-item-enemy {
+	border: 3px solid crimson;
+	border-left-width: 15px;
+}
+.initiative-item-sorting {
+	min-width: 50px;
+	text-align: center;
+	padding: 0 1rem;
+	border-right: 1px solid black;
+}
+.initiative-item-label {
+	min-width: 50px;
+	flex: 1;
+	padding: 0 1rem;
+	border-right: 1px solid black;
+}
+.initiative-item-hp {
+	min-width: 50px;
+	text-align: center;
+	padding: 0 1rem;
+	border-right: 1px solid black;
+}
+.initiative-item-stats {
+	min-width: 50px;
+	padding: 0 1rem;
+	text-align: center;
+}
