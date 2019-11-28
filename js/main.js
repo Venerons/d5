@@ -165,15 +165,15 @@ var get_modifier_string = function (value) {
 	return modifier >= 0 ? '+' + modifier.toString() : modifier.toString();
 };
 
-var render_monsters_list = function ($list_block) {
-	if (!window.DND5_MONSTERS) {
+var render_monsters_list = function ($list_block, set) {
+	if (!set) {
 		return;
 	}
 	$list_block.empty();
-	Object.keys(DND5_MONSTERS).sort(function (a, b) {
-		return DND5_MONSTERS[a].name < DND5_MONSTERS[b].name ? -1 : 1;
+	Object.keys(set).sort(function (a, b) {
+		return set[a].name < set[b].name ? -1 : 1;
 	}).forEach(function (monster_id) {
-		var monster = DND5_MONSTERS[monster_id];
+		var monster = set[monster_id];
 		if (monster) {
 			var cr = monster.challenge_rating;
 			if (cr === 0.125) {
@@ -199,15 +199,16 @@ var filter_monsters_list = function ($monsters_list, filter, pattern) {
 			$li.show();
 		} else {
 			var monster_id = $li.data('monster'),
-				monster = DND5_MONSTERS[monster_id];
+				monster = CAMPAIGN.npcs[monster_id] || DND5_MONSTERS[monster_id];
 			if (!monster) {
 				$li.hide();
 			} else {
 				var f1 = monster.name && monster.name.toLowerCase().indexOf(pattern) !== -1,
 					f2 = monster.name_it && monster.name_it.toLowerCase().indexOf(pattern) !== -1,
-					f3 = monster.type && monster.type.toLowerCase().indexOf(pattern) !== -1,
-					f4 = monster.challenge_rating && monster.challenge_rating === parseFloat(pattern);
-				if (f1 || f2 || f3 || f4) {
+					f3 = monster.type && monster.type.toLowerCase() === pattern,
+					f4 = monster.challenge_rating && monster.challenge_rating === parseFloat(pattern),
+					f5 = monster.environment && monster.environment.toString().toLowerCase().indexOf(pattern) !== -1;
+				if (f1 || f2 || f3 || f4 || f5) {
 					$li.show();
 				} else {
 					$li.hide();
@@ -223,12 +224,18 @@ var render_monster_preview = function ($preview, monster_id, monster_object) {
 	}
 	var monster;
 	if (monster_id) {
-		monster = DND5_MONSTERS[monster_id];
+		monster = CAMPAIGN.npcs[monster_id];
 	} else if (monster_object) {
 		monster = monster_object;
 	}
 	if (monster && $preview) {
 		$preview.empty();
+		if (monster_id) {
+			$preview.append(
+				'<div class="flex-row">' +
+					'<button data-action="edit-monster" data-monster="' + monster.id + '" class="button">Edit</button>' +
+				'</div>');
+		}
 		$preview.append(
 			'<h2 class="h2 h2-dnd">' + html_encode(monster.name || '-') + '</h2>' +
 			'<p class="p font-italic">' + html_encode(monster.size || '-') + ' ' + html_encode(monster.type || '-') + ', ' + html_encode(monster.alignment || '-') + '</p>' +
@@ -241,7 +248,7 @@ var render_monster_preview = function ($preview, monster_id, monster_object) {
 		} else if (cr === 0.5) {
 			cr = '1/2';
 		}
-		if (monster.source.indexOf('SRD') === -1) {
+		if (monster.source && monster.source.indexOf('SRD') === -1) {
 			$preview.append(
 				'<ul style="list-style: none outside none">' +
 					'<li><span class="font-bold">Challenge</span> ' + html_encode(cr || '-') + '</li>' +
@@ -305,6 +312,11 @@ var render_monster_preview = function ($preview, monster_id, monster_object) {
 				});
 			}
 		}
+		if (monster.desc) {
+			$preview.append(
+				'<h3 class="h3 h3-dnd">Description</h3>' +
+				'<p class="p">' + html_encode(monster.desc) + '</p>');
+		}
 		if (monster.environment && monster.environment.length > 0) {
 			$preview.append('<p class="p"><span class="font-bold">Environment:</span> ' + monster.environment.join(', ') + '</p>');
 		}
@@ -312,6 +324,119 @@ var render_monster_preview = function ($preview, monster_id, monster_object) {
 			$preview.append('<p class="p"><span class="font-bold">Source:</span> ' + monster.source.join(', ') + '</p>');
 		}
 	}
+};
+
+var select_monster_dialog = function (callback) {
+	var $content = $(
+		'<div class="flex-column" style="height: 100%">' +
+			'<div class="flex-row">' +
+				'<input id="select-monster-search" type="search" placeholder="Search" class="input" style="flex: 1">' +
+			'</div>' +
+			'<div class="flex-1" style="overflow: auto">' +
+				'<ol id="select-monster-list" class="list list-hover"></ol>' +
+			'</div>' +
+		'</div>');
+	var $select_monster_search = $content.find('#select-monster-search');
+	$select_monster_search.on('input', function () {
+		var pattern = $(this).val().toLowerCase();
+		filter_monsters_list($content.find('#select-monster-list'), null, pattern);
+	});
+	var $select_monster_list = $content.find('#select-monster-list').empty();
+	render_monsters_list($select_monster_list, DND5_MONSTERS);
+	$select_monster_list.on('click', 'li', function () {
+		var monster_id = $(this).data('monster'),
+			monster = CAMPAIGN.npcs[monster_id] || DND5_MONSTERS[monster_id];
+		dialog.close();
+		callback(monster);
+	});
+	var dialog = open_dialog({
+		title: 'Select Monster',
+		height: Math.round(window.innerHeight * 0.75),
+		content: $content,
+		buttons: [
+			{
+				label: 'Cancel',
+				onclick: function () {
+					this.close();
+				}
+			}
+		]
+	});
+};
+
+var edit_monster_dialog = function (monster) {
+	if (!monster) {
+		select_monster_dialog(function (selected_monster) {
+			edit_monster_dialog(selected_monster);
+		});
+		return;
+	}
+	var action = CAMPAIGN.npcs[monster.id] ? 'edit' : 'add';
+	var $content = $(
+		'<div class="form">' +
+			'<div class="form-field">' +
+				'<label for="monster-name">Name</label>' +
+				'<input id="monster-name" type="text" class="input">' +
+			'</div>' +
+			'<div class="form-field">' +
+				'<label for="monster-desc">Description</label>' +
+				'<textarea id="monster-desc" rows="10" class="input"></textarea>' +
+			'</div>' +
+		'</div>');
+	if (action === 'edit') {
+		$content.find('#monster-name').val(monster.name);
+		$content.find('#monster-desc').val(monster.desc);
+	}
+	var buttons = [];
+	buttons.push({
+		label: 'Cancel',
+		onclick: function () {
+			this.close();
+		}
+	});
+	if (action === 'edit') {
+		buttons.push({
+			label: 'Delete',
+			class: 'button button-danger',
+			onclick: function () {
+				delete CAMPAIGN.npcs[monster.id];
+				render_monsters_list($('#campaign-monsters-list'), CAMPAIGN.npcs);
+				$('#campaign-monsters-preview').empty();
+				this.close();
+			}
+		});
+	}
+	buttons.push({
+		label: action === 'edit' ? 'Edit' : 'Add',
+		class: 'button button-primary',
+		onclick: function () {
+			var name = $content.find('#monster-name').val().trim();
+			if (!name || name === '') {
+				open_dialog({ title: 'Warning', content: 'Invalid name.' });
+				return;
+			}
+			var desc = $content.find('#monster-desc').val().trim();
+			if (!desc || desc === '') {
+				open_dialog({ title: 'Warning', content: 'Invalid description.' });
+				return;
+			}
+			var new_monster = $.extend(true, {}, monster);
+			if (action === 'add') {
+				new_monster.id = random_id();
+			}
+			new_monster.name = name;
+			new_monster.desc = desc;
+			CAMPAIGN.npcs[new_monster.id] = new_monster;
+			render_monsters_list($('#campaign-monsters-list'), CAMPAIGN.npcs);
+			$('#campaign-monsters-preview').empty();
+			this.close();
+		}
+	});
+	open_dialog({
+		title: action === 'edit' ? 'Edit Non Player Character' : 'Add Non Player Character',
+		content: $content,
+		buttons: buttons
+	});
 };
 
 var render_spells_list = function ($list_block) {
@@ -387,6 +512,9 @@ var render_spell_preview = function ($preview, spell_id, spell_object) {
 				'<li><span class="font-bold">Range/Area:</span> ' + html_encode(spell.range || '-') + '</li>' +
 				'<li><span class="font-bold">Components:</span> ' + html_encode(spell.components || '-') + html_encode(spell.material ? ' (' + spell.material + ')' : '') + '</li>' +
 				'<li><span class="font-bold">Duration:</span> ' + html_encode(spell.concentration ? 'Concentration, ' : '') + html_encode(spell.duration || '-') + '</li>' +
+				(spell.class && spell.class.length > 0 ? '<li><span class="font-bold">Class:</span> ' + spell.class.join(', ') + '</li>' : '') +
+				(spell.subclass && spell.subclass.length > 0 ? '<li><span class="font-bold">Subclass:</span> ' + spell.subclass.join(', ') + '</li>' : '') +
+				(spell.source ? '<li><span class="font-bold">Source:</span> ' + spell.source.join(', ') + '</li>' : '') +
 			'</ul>');
 		if (spell.source.indexOf('SRD') === -1) {
 			$preview.append('<p class="p">Not in SRD, data not available.</p>');
@@ -400,16 +528,179 @@ var render_spell_preview = function ($preview, spell_id, spell_object) {
 				$preview.append('<p class="p">' + html_encode(spell.higher_level) + '</p>');
 			}
 		}
-		if (spell.class && spell.class.length > 0) {
-			$preview.append('<p class="p"><span class="font-bold">Class:</span> ' + spell.class.join(', ') + '</p>');
+	}
+};
+
+var render_items_list = function ($list_block, set) {
+	$list_block.empty();
+	if (!set) {
+		set = CAMPAIGN.items;
+	}
+	Object.keys(set).sort(function (a, b) {
+		return set[a].name < set[b].name ? -1 : 1;
+	}).forEach(function (item_id) {
+		var item = set[item_id];
+		if (item) {
+			$list_block.append(
+				'<li data-item="' + item_id + '">' +
+					'<div class="font-big">' + html_encode(item.name || '-') + '</div>' +
+					'<div class="font-small font-gray font-italic">' + html_encode(item.type || '-') + ', ' + html_encode(item.rarity || '-') + html_encode(item.attunement ? ' (requires attunement)' : '') + '</div>' +
+				'</li>');
 		}
-		if (spell.subclass && spell.subclass.length > 0) {
-			$preview.append('<p class="p"><span class="font-bold">Subclass:</span> ' + spell.subclass.join(', ') + '</p>');
+	});
+};
+
+var filter_items_list = function ($items_list, filter, pattern) {
+	$items_list.find('li').each(function () {
+		var $li = $(this);
+		if (pattern === '') {
+			$li.show();
+		} else {
+			var item_id = $li.data('item'),
+				item = DND5_ITEMS[item_id];
+			if (!item) {
+				$li.hide();
+			} else {
+				var f1 = item.name && item.name.toLowerCase().indexOf(pattern) !== -1,
+					f2 = item.name_it && item.name_it.toLowerCase().indexOf(pattern) !== -1,
+					f3 = item.type && item.type.toLowerCase() === pattern,
+					f4 = item.rarity && item.rarity.toLowerCase() === pattern;
+				if (f1 || f2 || f3 || f4) {
+					$li.show();
+				} else {
+					$li.hide();
+				}
+			}
 		}
+	});
+};
+
+var render_item_preview = function ($preview, item_id, item_object) {
+	var item;
+	if (item_id) {
+		item = CAMPAIGN.items[item_id];
+	} else if (item_object) {
+		item = item_object;
+	}
+	if (item && $preview) {
+		$preview.empty();
+		if (item_id) {
+			$preview.append(
+				'<div class="flex-row">' +
+					'<button data-action="edit-item" data-item="' + item.id + '" class="button">Edit</button>' +
+				'</div>');
+		}
+		$preview.append(
+			'<h2 class="h2 h2-dnd">' + html_encode(item.name || '-') + '</h2>' +
+			'<p class="p font-italic">' + html_encode(item.type || '-') + (item.limits ? ' (' + html_encode(item.limits) + ')' : '') + ', ' + html_encode(item.rarity || '-') + html_encode(item.attunement ? ' (requires attunement)' : '') + '</p>' +
+			'<p class="p">' + html_encode(item.desc ? item.desc.replace(/\r\n/g, '<br>').replace(/\r/g, '<br>').replace(/\n/g, '<br>') : '-') + '</p>');
 		if (spell.source) {
 			$preview.append('<p class="p"><span class="font-bold">Source:</span> ' + spell.source.join(', ') + '</p>');
 		}
 	}
+};
+
+var edit_item_dialog = function (item) {
+	var $content = $(
+		'<div class="form">' +
+			'<div class="form-field">' +
+				'<label>Name</label>' +
+				'<input id="item-name" type="text" class="input">' +
+			'</div>' +
+			'<div class="form-field">' +
+				'<label>Type</label>' +
+				'<select id="item-type" class="select">' +
+					'<option>Armor</option>' +
+					'<option>Potion</option>' +
+					'<option>Rod</option>' +
+					'<option>Scroll</option>' +
+					'<option>Staff</option>' +
+					'<option>Wand</option>' +
+					'<option>Weapon</option>' +
+					'<option>Wondrous Item</option>' +
+				'</select>' +
+			'</div>' +
+			'<div class="form-field">' +
+				'<label>Rarity</label>' +
+				'<select id="item-rarity" class="select">' +
+					'<option>Common</option>' +
+					'<option>Uncommon</option>' +
+					'<option>Rare</option>' +
+					'<option>Very rare</option>' +
+					'<option>Legendary</option>' +
+				'</select>' +
+			'</div>' +
+			'<div class="form-field">' +
+				'<label>Requires Attunement</label>' +
+				'<select id="item-attunement" class="select">' +
+					'<option value="no">No</option>' +
+					'<option value="yes">Yes</option>' +
+				'</select>' +
+			'</div>' +
+			'<div class="form-field">' +
+				'<label>Description</label>' +
+				'<textarea id="item-desc" rows="10" class="input"></textarea>' +
+			'</div>' +
+		'</div>');
+	if (item) {
+		$content.find('#item-name').val(item.name);
+		$content.find('#item-type').val(item.type);
+		$content.find('#item-rarity').val(item.rarity);
+		$content.find('#item-attunement').val(item.attunement ? 'yes' : 'no');
+		$content.find('#item-desc').val(item.desc);
+	}
+	var buttons = [];
+	buttons.push({
+		label: 'Cancel',
+		onclick: function () {
+			this.close();
+		}
+	});
+	if (item) {
+		buttons.push({
+			label: 'Delete',
+			class: 'button button-danger',
+			onclick: function () {
+				delete CAMPAIGN.items[item.id];
+				render_items_list($('#campaign-items-list'), CAMPAIGN.items);
+				$('#campaign-items-preview').empty();
+				this.close();
+			}
+		});
+	}
+	buttons.push({
+		label: item ? 'Edit' : 'Add',
+		class: 'button button-primary',
+		onclick: function () {
+			var name = $content.find('#item-name').val().trim();
+			if (!name || name === '') {
+				open_dialog({ title: 'Warning', content: 'Invalid name.' });
+				return;
+			}
+			var desc = $content.find('#item-desc').val().trim();
+			if (!desc || desc === '') {
+				open_dialog({ title: 'Warning', content: 'Invalid description.' });
+				return;
+			}
+			var new_item = {
+				id: item ? item.id : random_id(),
+				name: name,
+				type: $content.find('#item-type').val(),
+				rarity: $content.find('#item-rarity').val(),
+				attunement: $content.find('#item-attunement').val() === 'yes',
+				desc: desc
+			}
+			CAMPAIGN.items[new_item.id] = new_item;
+			render_items_list($('#campaign-items-list'), CAMPAIGN.items);
+			$('#campaign-items-preview').empty();
+			this.close();
+		}
+	});
+	open_dialog({
+		title: item ? 'Edit Item' : 'Add Item',
+		content: $content,
+		buttons: buttons
+	});
 };
 
 var render_pcs_list = function ($list_block, set) {
@@ -531,8 +822,8 @@ var edit_pc_dialog = function (pc) {
 			class: 'button button-danger',
 			onclick: function () {
 				delete CAMPAIGN.pcs[pc.id];
-				render_pcs_list($('#pcs-list'));
-				$('#pcs-preview').empty();
+				render_pcs_list($('#campaign-pcs-list'), CAMPAIGN.pcs);
+				$('#campaign-pcs-preview').empty();
 				this.close();
 			}
 		});
@@ -587,118 +878,13 @@ var edit_pc_dialog = function (pc) {
 				passive_perception: passive_perception
 			}
 			CAMPAIGN.pcs[new_pc.id] = new_pc;
-			render_pcs_list($('#pcs-list'));
-			$('#pcs-preview').empty();
+			render_pcs_list($('#campaign-pcs-list'), CAMPAIGN.pcs);
+			$('#campaign-pcs-preview').empty();
 			this.close();
 		}
 	});
 	open_dialog({
 		title: pc ? 'Edit Player Character' : 'Add Player Character',
-		content: $content,
-		buttons: buttons
-	});
-};
-
-var render_npcs_list = function ($list_block, set) {
-	$list_block.empty();
-	if (!set) {
-		set = CAMPAIGN.npcs;
-	}
-	Object.keys(set).sort(function (a, b) {
-		return set[a].name < set[b].name ? -1 : 1;
-	}).forEach(function (npc_id) {
-		var npc = set[npc_id];
-		if (npc) {
-			$list_block.append(
-				'<li data-npc="' + npc_id + '">' +
-					'<div class="font-big">' + html_encode(npc.name || '-') + '</div>' +
-					'<div class="font-small font-gray font-italic">' + html_encode(npc.desc || '-') + '</div>' +
-				'</li>');
-		}
-	});
-};
-
-var render_npc_preview = function ($preview, npc_id, npc_object) {
-	var npc;
-	if (npc_id) {
-		npc = CAMPAIGN.npcs[npc_id];
-	} else if (npc_object) {
-		npc = npc_object;
-	}
-	if (npc && $preview) {
-		$preview.empty();
-		$preview.append(
-			'<div class="flex-row">' +
-				'<button data-action="edit-npc" data-npc="' + npc.id + '" class="button">Edit</button>' +
-			'</div>');
-		var $stats = $('<div></div>');
-		render_monster_preview($stats, null, npc);
-		$preview.append($stats);
-	}
-};
-
-var edit_npc_dialog = function (npc) {
-	var $content = $(
-		'<div class="form">' +
-			'<div class="form-field">' +
-				'<label for="npc-name">Name</label>' +
-				'<input id="npc-name" type="text" class="input">' +
-			'</div>' +
-			'<div class="form-field">' +
-				'<label for="npc-desc">Description</label>' +
-				'<input id="npc-desc" type="text" class="input">' +
-			'</div>' +
-		'</div>');
-	if (npc) {
-		$content.find('#npc-name').val(npc.name);
-		$content.find('#npc-desc').val(npc.desc);
-	}
-	var buttons = [];
-	buttons.push({
-		label: 'Cancel',
-		onclick: function () {
-			this.close();
-		}
-	});
-	if (npc) {
-		buttons.push({
-			label: 'Delete',
-			class: 'button button-danger',
-			onclick: function () {
-				delete CAMPAIGN.npcs[npc.id];
-				render_npcs_list($('#npcs-list'));
-				$('#npcs-preview').empty();
-				this.close();
-			}
-		});
-	}
-	buttons.push({
-		label: npc ? 'Edit' : 'Add',
-		class: 'button button-primary',
-		onclick: function () {
-			var name = $content.find('#npc-name').val().trim();
-			if (!name || name === '') {
-				open_dialog({ title: 'Warning', content: 'Invalid name.' });
-				return;
-			}
-			var desc = $content.find('#npc-desc').val().trim();
-			if (!desc || desc === '') {
-				open_dialog({ title: 'Warning', content: 'Invalid description.' });
-				return;
-			}
-			var new_npc = {
-				id: npc ? npc.id : random_id(),
-				name: name,
-				desc: desc
-			}
-			CAMPAIGN.npcs[new_npc.id] = new_npc;
-			render_npcs_list($('#npcs-list'));
-			$('#npcs-preview').empty();
-			this.close();
-		}
-	});
-	open_dialog({
-		title: npc ? 'Edit Non Player Character' : 'Add Non Player Character',
 		content: $content,
 		buttons: buttons
 	});
@@ -822,8 +1008,8 @@ var edit_encounter_dialog = function (encounter) {
 			class: 'button button-danger',
 			onclick: function () {
 				delete CAMPAIGN.encounters[encounter.id];
-				render_encounters_list($('#encounters-list'));
-				$('#encounters-preview').empty();
+				render_encounters_list($('#campaign-encounters-list'), CAMPAIGN.encounters);
+				$('#campaign-encounters-preview').empty();
 				this.close();
 			}
 		});
@@ -850,154 +1036,13 @@ var edit_encounter_dialog = function (encounter) {
 				enemies: []
 			}
 			CAMPAIGN.encounters[new_encounter.id] = new_encounter;
-			render_encounters_list($('#encounters-list'));
-			$('#encounters-preview').empty();
+			render_encounters_list($('#campaign-encounters-list'), CAMPAIGN.encounters);
+			$('#campaign-encounters-preview').empty();
 			this.close();
 		}
 	});
 	open_dialog({
 		title: encounter ? 'Edit Encounter' : 'Add Encounter',
-		content: $content,
-		buttons: buttons
-	});
-};
-
-var render_items_list = function ($list_block, set) {
-	$list_block.empty();
-	if (!set) {
-		set = CAMPAIGN.items;
-	}
-	Object.keys(set).sort(function (a, b) {
-		return set[a].name < set[b].name ? -1 : 1;
-	}).forEach(function (item_id) {
-		var item = set[item_id];
-		if (item) {
-			$list_block.append(
-				'<li data-item="' + item_id + '">' +
-					'<div class="font-big">' + html_encode(item.name || '-') + '</div>' +
-					'<div class="font-small font-gray font-italic">' + html_encode(item.type || '-') + ', ' + html_encode(item.rarity || '-') + html_encode(item.attunement ? ' (requires attunement)' : '') + '</div>' +
-				'</li>');
-		}
-	});
-};
-
-var render_item_preview = function ($preview, item_id, item_object) {
-	var item;
-	if (item_id) {
-		item = CAMPAIGN.items[item_id];
-	} else if (item_object) {
-		item = item_object;
-	}
-	if (item && $preview) {
-		$preview.empty();
-		$preview.append(
-			'<div class="flex-row">' +
-				'<button data-action="edit-item" data-item="' + item.id + '" class="button">Edit</button>' +
-			'</div>' +
-			'<h2 class="h2 h2-dnd">' + html_encode(item.name || '-') + '</h2>' +
-			'<p class="p font-italic">' + html_encode(item.type || '-') + (item.limits ? ' (' + html_encode(item.limits) + ')' : '') + ', ' + html_encode(item.rarity || '-') + html_encode(item.attunement ? ' (requires attunement)' : '') + '</p>' +
-			'<p class="p">' + html_encode(item.desc ? item.desc.replace(/\r\n/g, '<br>').replace(/\r/g, '<br>').replace(/\n/g, '<br>') : '-') + '</p>');
-	}
-};
-
-var edit_item_dialog = function (item) {
-	var $content = $(
-		'<div class="form">' +
-			'<div class="form-field">' +
-				'<label>Name</label>' +
-				'<input id="item-name" type="text" class="input">' +
-			'</div>' +
-			'<div class="form-field">' +
-				'<label>Type</label>' +
-				'<select id="item-type" class="select">' +
-					'<option>Armor</option>' +
-					'<option>Potion</option>' +
-					'<option>Rod</option>' +
-					'<option>Scroll</option>' +
-					'<option>Staff</option>' +
-					'<option>Wand</option>' +
-					'<option>Weapon</option>' +
-					'<option>Wondrous Item</option>' +
-				'</select>' +
-			'</div>' +
-			'<div class="form-field">' +
-				'<label>Rarity</label>' +
-				'<select id="item-rarity" class="select">' +
-					'<option>Common</option>' +
-					'<option>Uncommon</option>' +
-					'<option>Rare</option>' +
-					'<option>Very rare</option>' +
-					'<option>Legendary</option>' +
-				'</select>' +
-			'</div>' +
-			'<div class="form-field">' +
-				'<label>Requires Attunement</label>' +
-				'<select id="item-attunement" class="select">' +
-					'<option value="no">No</option>' +
-					'<option value="yes">Yes</option>' +
-				'</select>' +
-			'</div>' +
-			'<div class="form-field">' +
-				'<label>Description</label>' +
-				'<textarea id="item-desc" rows="10" class="input"></textarea>' +
-			'</div>' +
-		'</div>');
-	if (item) {
-		$content.find('#item-name').val(item.name);
-		$content.find('#item-type').val(item.type);
-		$content.find('#item-rarity').val(item.rarity);
-		$content.find('#item-attunement').val(item.attunement ? 'yes' : 'no');
-		$content.find('#item-desc').val(item.desc);
-	}
-	var buttons = [];
-	buttons.push({
-		label: 'Cancel',
-		onclick: function () {
-			this.close();
-		}
-	});
-	if (item) {
-		buttons.push({
-			label: 'Delete',
-			class: 'button button-danger',
-			onclick: function () {
-				delete CAMPAIGN.items[item.id];
-				render_items_list($('#items-list'));
-				$('#items-preview').empty();
-				this.close();
-			}
-		});
-	}
-	buttons.push({
-		label: item ? 'Edit' : 'Add',
-		class: 'button button-primary',
-		onclick: function () {
-			var name = $content.find('#item-name').val().trim();
-			if (!name || name === '') {
-				open_dialog({ title: 'Warning', content: 'Invalid name.' });
-				return;
-			}
-			var desc = $content.find('#item-desc').val().trim();
-			if (!desc || desc === '') {
-				open_dialog({ title: 'Warning', content: 'Invalid description.' });
-				return;
-			}
-			var new_item = {
-				id: item ? item.id : random_id(),
-				name: name,
-				type: $content.find('#item-type').val(),
-				rarity: $content.find('#item-rarity').val(),
-				attunement: $content.find('#item-attunement').val() === 'yes',
-				desc: desc
-			}
-			CAMPAIGN.items[new_item.id] = new_item;
-			render_items_list($('#items-list'));
-			$('#items-preview').empty();
-			this.close();
-		}
-	});
-	open_dialog({
-		title: item ? 'Edit Item' : 'Add Item',
 		content: $content,
 		buttons: buttons
 	});
@@ -1109,8 +1154,8 @@ var edit_note_dialog = function (note) {
 			class: 'button button-danger',
 			onclick: function () {
 				delete CAMPAIGN.notes[note.id];
-				render_notes_list($('#notes-list'));
-				$('#notes-preview').empty();
+				render_notes_list($('#campaign-notes-list'), CAMPAIGN.notes);
+				$('#campaign-notes-preview').empty();
 				this.close();
 			}
 		});
@@ -1135,8 +1180,8 @@ var edit_note_dialog = function (note) {
 				desc: desc
 			}
 			CAMPAIGN.notes[new_note.id] = new_note;
-			render_notes_list($('#notes-list'));
-			$('#notes-preview').empty();
+			render_notes_list($('#campaign-notes-list'), CAMPAIGN.notes);
+			$('#campaign-notes-preview').empty();
 			this.close();
 		}
 	});
@@ -1271,16 +1316,16 @@ $('body').on('click', '[data-page]', function () {
 			edit_pc_dialog(pc);
 		}
 
-	} else if (action === 'add-npc') {
+	} else if (action === 'add-monster') {
 
-		edit_npc_dialog();
+		edit_monster_dialog();
 
-	} else if (action === 'edit-npc') {
+	} else if (action === 'edit-monster') {
 
-		var npc_id = $(this).data('npc').toString(),
-			npc = CAMPAIGN.npcs[npc_id];
-		if (npc) {
-			edit_npc_dialog(npc);
+		var monster_id = $(this).data('monster').toString(),
+			monster = CAMPAIGN.npcs[monster_id];
+		if (monster) {
+			edit_monster_dialog(monster);
 		}
 
 	} else if (action === 'add-encounter') {
@@ -1317,8 +1362,8 @@ $('body').on('click', '[data-page]', function () {
 			doc = CAMPAIGN.documents[document_id];
 		if (doc) {
 			delete CAMPAIGN.documents[document_id];
-			render_documents_list($('#documents-list'));
-			$('#documents-preview').empty();
+			render_documents_list($('#campaign-documents-list'), CAMPAIGN.documents);
+			$('#campaign-documents-preview').empty();
 		}
 
 	} else if (action === 'add-note') {
@@ -1377,73 +1422,88 @@ $('#campaign-document-input').on('change', function () {
 			data: event.target.result
 		};
 		CAMPAIGN.documents[new_document.id] = new_document;
-		render_documents_list($('#documents-list'));
-		$('#documents-preview').empty();
+		render_documents_list($('#campaign-documents-list'), CAMPAIGN.documents);
+		$('#campaign-documents-preview').empty();
 	};
 	reader.readAsDataURL(file);
 });
 
 var render_campaign = function () {
-	render_pcs_list($('#pcs-list'));
-	render_npcs_list($('#npcs-list'));
-	render_encounters_list($('#encounters-list'));
-	render_items_list($('#items-list'));
-	render_documents_list($('#documents-list'));
-	render_notes_list($('#notes-list'));
+	render_pcs_list($('#campaign-pcs-list'), CAMPAIGN.pcs);
+	render_monsters_list($('#campaign-monsters-list'), CAMPAIGN.npcs);
+	render_encounters_list($('#campaign-encounters-list'), CAMPAIGN.encounters);
+	render_items_list($('#campaign-items-list'), CAMPAIGN.items);
+	render_documents_list($('#campaign-documents-list'), CAMPAIGN.documents);
+	render_notes_list($('#campaign-notes-list'), CAMPAIGN.notes);
 };
 
-var $bestiary_search = $('#bestiary-search');
-$bestiary_search.on('input', function () {
+var $compendium_monsters_search = $('#compendium-monsters-search');
+$compendium_monsters_search.on('input', function () {
 	var pattern = $(this).val().toLowerCase();
-	filter_monsters_list($('#bestiary-list'), null, pattern);
+	filter_monsters_list($('#compendium-monsters-list'), null, pattern);
 });
-var $bestiary_list = $('#bestiary-list').empty();
-render_monsters_list($bestiary_list);
-$bestiary_list.on('click', 'li', function () {
-	var monster_id = $(this).data('monster');
-	render_monster_preview($('#bestiary-preview'), monster_id);
+var $compendium_monsters_list = $('#compendium-monsters-list').empty();
+render_monsters_list($compendium_monsters_list, DND5_MONSTERS);
+$compendium_monsters_list.on('click', 'li', function () {
+	var monster_id = $(this).data('monster'),
+		monster = DND5_MONSTERS[monster_id];
+	render_monster_preview($('#compendium-monsters-preview'), null, monster);
 });
 
-var $spellbook_search = $('#spellbook-search');
-$spellbook_search.on('input', function () {
+var $compendium_spells_search = $('#compendium-spells-search');
+$compendium_spells_search.on('input', function () {
 	var pattern = $(this).val().toLowerCase();
-	filter_spells_list($('#spellbook-list'), null, pattern);
+	filter_spells_list($('#compendium-spells-list'), null, pattern);
 });
-var $spellbook_list = $('#spellbook-list').empty();
-render_spells_list($spellbook_list);
-$spellbook_list.on('click', 'li', function () {
-	var spell_id = $(this).data('spell');
-	render_spell_preview($('#spellbook-preview'), spell_id);
+var $compendium_spells_list = $('#compendium-spells-list').empty();
+render_spells_list($compendium_spells_list, DND5_SPELLS);
+$compendium_spells_list.on('click', 'li', function () {
+	var spell_id = $(this).data('spell'),
+		spell = DND5_SPELLS[spell_id];
+	render_spell_preview($('#compendium-spells-preview'), null, spell);
 });
 
-$('#pcs-list').on('click', 'li', function () {
+var $compendium_items_search = $('#compendium-items-search');
+$compendium_items_search.on('input', function () {
+	var pattern = $(this).val().toLowerCase();
+	filter_items_list($('#compendium-items-list'), null, pattern);
+});
+var $compendium_items_list = $('#compendium-items-list').empty();
+render_items_list($compendium_items_list, DND5_ITEMS);
+$compendium_items_list.on('click', 'li', function () {
+	var item_id = $(this).data('item'),
+		item = DND5_ITEMS[item_id];
+	render_item_preview($('#compendium-items-preview'), null, item);
+});
+
+$('#campaign-pcs-list').on('click', 'li', function () {
 	var pc_id = $(this).data('pc').toString();
-	render_pc_preview($('#pcs-preview'), pc_id);
+	render_pc_preview($('#campaign-pcs-preview'), pc_id);
 });
 
-$('#npcs-list').on('click', 'li', function () {
-	var npc_id = $(this).data('npc').toString();
-	render_npc_preview($('#npcs-preview'), npc_id);
+$('#campaign-monsters-list').on('click', 'li', function () {
+	var monster_id = $(this).data('monster').toString();
+	render_monster_preview($('#campaign-monsters-preview'), monster_id);
 });
 
-$('#encounters-list').on('click', 'li', function () {
+$('#campaign-encounters-list').on('click', 'li', function () {
 	var encounter_id = $(this).data('encounter').toString();
-	render_encounter_preview($('#encounters-preview'), encounter_id);
+	render_encounter_preview($('#campaign-encounters-preview'), encounter_id);
 });
 
-$('#items-list').on('click', 'li', function () {
+$('#campaign-items-list').on('click', 'li', function () {
 	var item_id = $(this).data('item').toString();
-	render_item_preview($('#items-preview'), item_id);
+	render_item_preview($('#campaign-items-preview'), item_id);
 });
 
-$('#documents-list').on('click', 'li', function () {
+$('#campaign-documents-list').on('click', 'li', function () {
 	var document_id = $(this).data('document').toString();
-	render_document_preview($('#documents-preview'), document_id);
+	render_document_preview($('#campaign-documents-preview'), document_id);
 });
 
-$('#notes-list').on('click', 'li', function () {
+$('#campaign-notes-list').on('click', 'li', function () {
 	var note_id = $(this).data('note').toString();
-	render_note_preview($('#notes-preview'), note_id);
+	render_note_preview($('#campaign-notes-preview'), note_id);
 });
 
 render_campaign();
