@@ -41,6 +41,30 @@
 	--body-text-font: 400 normal 14px/1.2 Lato, 'Helvetica Neue', Arial, Helvetica, sans-serif;
 	--body-text-color: #f9f9fa; /* #edd9b4 */
 
+	/* ASIDE */
+
+	--aside-background-color: #edd9b4;
+	--aside-text-color: black;
+
+	--aside-heading-color: #58180d;
+
+	--aside-list-item-background-color: #edd9b4;
+	--aside-list-item-text-color: black;
+	--aside-list-item-focus-background-color: #e8cf9f;
+	--aside-list-item-focus-text-color: #58180d;
+	--aside-list-item-active-background-color: #e3c48b;
+	--aside-list-item-active-text-color: #58180d;
+
+	/* HEADER */
+
+	--header-background-color: #edd9b4;
+	--header-text-color: #58180d;
+
+	/* MAIN */
+
+	--main-background-color: var(--body-background-color);
+	--main-text-color: var(--body-text-color);
+
 	/* BUTTON */
 
 	--button-background-color: #e0e1e2;
@@ -104,6 +128,7 @@
 
 	--tab-background-color: transparent;
 	--tab-text-color: rgba(0, 0, 0, 0.6);
+	--tab-border-color: rgba(0, 0, 0, 0.1);
 	--tab-focus-background-color: #e0e1e2;
 	--tab-focus-text-color: rgba(0, 0, 0, 0.6);
 	--tab-active-background-color: #cacbcd;
@@ -122,30 +147,6 @@
 
 	--message-background-color: var(--body-text-color);
 	--message-text-color: var(--body-background-color);
-
-	/* ASIDE */
-
-	--aside-background-color: #edd9b4;
-	--aside-text-color: black;
-
-	--aside-heading-color: #58180d;
-
-	--aside-list-item-background-color: #edd9b4;
-	--aside-list-item-text-color: black;
-	--aside-list-item-focus-background-color: #e8cf9f;
-	--aside-list-item-focus-text-color: #58180d;
-	--aside-list-item-active-background-color: #e3c48b;
-	--aside-list-item-active-text-color: #58180d;
-
-	/* HEADER */
-
-	--header-background-color: #edd9b4;
-	--header-text-color: #58180d;
-
-	/* MAIN */
-
-	--main-background-color: var(--body-background-color);
-	--main-text-color: var(--body-text-color);
 
 	/* MISC */
 
@@ -299,7 +300,7 @@ Button
 	color: var(--button-active-text-color);
 }
 
-.button > i:first-child {
+.button:not(.button-icon) > i:first-child {
 	margin-right: 0.6rem;
 }
 
@@ -647,6 +648,10 @@ List
 	vertical-align: middle;
 }
 
+.list.list-divided > li:not(:last-of-type) {
+	border-bottom: 1px solid var(--list-border-color);
+}
+
 .list.list-bordered > li {
 	border: 1px solid var(--list-border-color);
 }
@@ -703,7 +708,7 @@ Tabs
 	text-align: center;
 	text-transform: uppercase;
 	color: var(--tab-text-color);
-	border-bottom: 2px solid transparent;
+	border-bottom: 3px solid var(--tab-border-color);
 	transition:
 		color 0.1s ease,
 		background-color 0.1s ease,
@@ -722,7 +727,7 @@ Tabs
 
 .tabs > li.tabs-active {
 	color: var(--color-primary);
-	border-bottom: 2px solid var(--color-primary);
+	border-color: var(--color-primary);
 }
 
 /*
