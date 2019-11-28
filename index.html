@@ -20,19 +20,20 @@
 						<li data-action="import" class="aside-list-item">Import</li>
 						<input id="campaign-import-input" type="file" accept="application/json,.json" hidden>
 						<li data-action="export" class="aside-list-item">Export</li>
-						<li data-page="pcs" class="aside-list-item">Player Characters</li>
-						<li data-page="npcs" class="aside-list-item">Non Player Characters</li>
-						<li data-page="encounters" class="aside-list-item">Encounters</li>
-						<li data-page="items" class="aside-list-item">Items</li>
-						<li data-page="documents" class="aside-list-item">Documents</li>
-						<li data-page="notes" class="aside-list-item">Notes</li>
+						<li data-page="campaign-pcs" class="aside-list-item">Player Characters</li>
+						<li data-page="campaign-monsters" class="aside-list-item">Non Player Characters</li>
+						<li data-page="campaign-encounters" class="aside-list-item">Encounters</li>
+						<li data-page="campaign-items" class="aside-list-item">Items</li>
+						<li data-page="campaign-documents" class="aside-list-item">Documents</li>
+						<li data-page="campaign-notes" class="aside-list-item">Notes</li>
 					</ol>
 				</div>
 				<div class="aside-section">
 					<h3 class="aside-heading">Compendium</h3>
 					<ol class="aside-list">
-						<li data-page="bestiary" class="aside-list-item">Bestiary</li>
-						<li data-page="spellbook" class="aside-list-item">Spellbook</li>
+						<li data-page="compendium-monsters" class="aside-list-item">Monsters</li>
+						<li data-page="compendium-spells" class="aside-list-item">Spells</li>
+						<li data-page="compendium-items" class="aside-list-item">Magic Items</li>
 					</ol>
 				</div>
 				<!--
@@ -76,85 +77,113 @@
 				<button data-action="import" class="button">Import</button>
 			</div>
 
-			<div data-page-id="bestiary" class="page columns" style="display: none">
-				<div class="column">
+			<div data-page-id="compendium-monsters" class="page columns" style="display: none">
+				<div class="column flex-column">
 					<div class="flex-row flex-row-margins">
-						<input id="bestiary-search" type="search" placeholder="Search" class="input" style="flex: 1">
+						<input id="compendium-monsters-search" type="search" placeholder="Search" class="input" style="flex: 1">
 					</div>
-					<ol id="bestiary-list" class="list list-hover"></ol>
+					<div class="flex-1" style="overflow: auto">
+						<ol id="compendium-monsters-list" class="list list-hover"></ol>
+					</div>
 				</div>
-				<div id="bestiary-preview" class="column"></div>
+				<div id="compendium-monsters-preview" class="column"></div>
 			</div>
 
-			<div data-page-id="spellbook" class="page columns" style="display: none">
-				<div class="column">
+			<div data-page-id="compendium-spells" class="page columns" style="display: none">
+				<div class="column flex-column">
 					<div class="flex-row flex-row-margins">
-						<input id="spellbook-search" type="search" placeholder="Search" class="input" style="flex: 1">
+						<input id="compendium-spells-search" type="search" placeholder="Search" class="input" style="flex: 1">
 					</div>
-					<ol id="spellbook-list" class="list list-hover"></ol>
+					<div class="flex-1" style="overflow: auto">
+						<ol id="compendium-spells-list" class="list list-hover"></ol>
+					</div>
 				</div>
-				<div id="spellbook-preview" class="column"></div>
+				<div id="compendium-spells-preview" class="column"></div>
 			</div>
 
-			<div data-page-id="pcs" class="page columns" style="display: none">
-				<div class="column">
+			<div data-page-id="compendium-items" class="page columns" style="display: none">
+				<div class="column flex-column">
+					<div class="flex-row flex-row-margins">
+						<input id="compendium-items-search" type="search" placeholder="Search" class="input" style="flex: 1">
+					</div>
+					<div class="flex-1" style="overflow: auto">
+						<ol id="compendium-items-list" class="list list-hover"></ol>
+					</div>
+				</div>
+				<div id="compendium-items-preview" class="column"></div>
+			</div>
+
+			<div data-page-id="campaign-pcs" class="page columns" style="display: none">
+				<div class="column flex-column">
 					<div class="flex-row flex-row-margins">
 						<button data-action="add-pc" class="button">Add</button>
 					</div>
-					<ol id="pcs-list" class="list list-hover"></ol>
-				</div>
-				<div id="pcs-preview" class="column"></div>
-			</div>
-
-			<div data-page-id="npcs" class="page columns" style="display: none">
-				<div class="column">
-					<div class="flex-row flex-row-margins">
-						<button data-action="add-npc" class="button">Add</button>
+					<div class="flex-1" style="overflow: auto">
+						<ol id="campaign-pcs-list" class="list list-hover"></ol>
 					</div>
-					<ol id="npcs-list" class="list list-hover"></ol>
 				</div>
-				<div id="npcs-preview" class="column"></div>
+				<div id="campaign-pcs-preview" class="column"></div>
 			</div>
 
-			<div data-page-id="encounters" class="page columns" style="display: none">
-				<div class="column">
+			<div data-page-id="campaign-monsters" class="page columns" style="display: none">
+				<div class="column flex-column">
+					<div class="flex-row flex-row-margins">
+						<button data-action="add-monster" class="button">Add</button>
+					</div>
+					<div class="flex-1" style="overflow: auto">
+						<ol id="campaign-monsters-list" class="list list-hover"></ol>
+					</div>
+				</div>
+				<div id="campaign-monsters-preview" class="column"></div>
+			</div>
+
+			<div data-page-id="campaign-encounters" class="page columns" style="display: none">
+				<div class="column flex-column">
 					<div class="flex-row flex-row-margins">
 						<button data-action="add-encounter" class="button">Add</button>
 					</div>
-					<ol id="encounters-list" class="list list-hover"></ol>
+					<div class="flex-1" style="overflow: auto">
+						<ol id="campaign-encounters-list" class="list list-hover"></ol>
+					</div>
 				</div>
-				<div id="encounters-preview" class="column"></div>
+				<div id="campaign-encounters-preview" class="column"></div>
 			</div>
 
-			<div data-page-id="items" class="page columns" style="display: none">
-				<div class="column">
+			<div data-page-id="campaign-items" class="page columns" style="display: none">
+				<div class="column flex-column">
 					<div class="flex-row flex-row-margins">
 						<button data-action="add-item" class="button">Add</button>
 					</div>
-					<ol id="items-list" class="list list-hover"></ol>
+					<div class="flex-1" style="overflow: auto">
+						<ol id="campaign-items-list" class="list list-hover"></ol>
+					</div>
 				</div>
-				<div id="items-preview" class="column"></div>
+				<div id="campaign-items-preview" class="column"></div>
 			</div>
 			
-			<div data-page-id="documents" class="page columns" style="display: none">
-				<div class="column">
+			<div data-page-id="campaign-documents" class="page columns" style="display: none">
+				<div class="column flex-column">
 					<div class="flex-row flex-row-margins">
 						<button data-action="add-document" class="button">Add</button>
 						<input id="campaign-document-input" type="file" accept="*" hidden>
 					</div>
-					<ol id="documents-list" class="list list-hover"></ol>
+					<div class="flex-1" style="overflow: auto">
+						<ol id="campaign-documents-list" class="list list-hover"></ol>
+					</div>
 				</div>
-				<div id="documents-preview" class="column"></div>
+				<div id="campaign-documents-preview" class="column"></div>
 			</div>
 			
-			<div data-page-id="notes" class="page columns" style="display: none">
-				<div class="column">
+			<div data-page-id="campaign-notes" class="page columns" style="display: none">
+				<div class="column flex-column">
 					<div class="flex-row flex-row-margins">
 						<button data-action="add-note" class="button">Add</button>
 					</div>
-					<ol id="notes-list" class="list list-hover"></ol>
+					<div class="flex-1" style="overflow: auto">
+						<ol id="campaign-notes-list" class="list list-hover"></ol>
+					</div>
 				</div>
-				<div id="notes-preview" class="column"></div>
+				<div id="campaign-notes-preview" class="column"></div>
 			</div>
 
 			<div data-page-id="encounter" class="page" style="display: none">
