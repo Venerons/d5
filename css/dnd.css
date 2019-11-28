@@ -14,13 +14,8 @@ DND 5
 #faf7ea
 */
 
-.h2-dnd {
-	color: var(--color-dark-red);
-}
-
 .h3-dnd {
-	color: var(--color-dark-red);
-	border-bottom: 1px solid var(--color-dark-red);
+	border-bottom: 1px solid var(--main-text-color);
 }
 
 .hr-dnd {
