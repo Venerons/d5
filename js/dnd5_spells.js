@@ -518,7 +518,7 @@ var DND5_SPELLS = {
 			"While affected by this spell, the object is more difficult to break or force open; the DC to break it or pick any locks on it increases by 10."
 		],
 		"range": "Touch",
-		"components": "V, S, M, g, p",
+		"components": "V, S, M",
 		"material": "Gold dust worth at least 25gp, which the spell consumes.",
 		"ritual": false,
 		"duration": "Until dispelled",
@@ -650,7 +650,7 @@ var DND5_SPELLS = {
 			"If you are returned to your body prematurely, your companions remain in their astral forms and must find their own way back to their bodies, usually by dropping to 0 hit points."
 		],
 		"range": "10 feet",
-		"components": "V, S, M, g, p",
+		"components": "V, S, M",
 		"material": "For each creature you affect with this spell, you must provide one jacinth worth at least 1,000gp and one ornately carved bar of silver worth at least 100gp, all of which the spell consumes.",
 		"ritual": false,
 		"duration": "Special",
@@ -681,7 +681,7 @@ var DND5_SPELLS = {
 			"If you cast the spell two or more times before completing your next long rest, there is a cumulative 25 percent chance for each casting after the first that you get a random reading. The DM makes this roll in secret."
 		],
 		"range": "Self",
-		"components": "V, S, M, g, p",
+		"components": "V, S, M",
 		"material": "Specially marked sticks, bones, or similar tokens worth at least 25gp.",
 		"ritual": true,
 		"duration": "Instantaneous",
@@ -755,7 +755,7 @@ var DND5_SPELLS = {
 			"The awakened beast or plant is charmed by you for 30 days or until you or your companions do anything harmful to it. When the charmed condition ends, the awakened creature chooses whether to remain friendly to you, based on how you treated it while it was charmed."
 		],
 		"range": "Touch",
-		"components": "V, S, M, g, p",
+		"components": "V, S, M",
 		"material": "An agate worth at least 1,000 gp, which the spell consumes.",
 		"ritual": false,
 		"duration": "Instantaneous",
@@ -1417,7 +1417,7 @@ var DND5_SPELLS = {
 	"Ceremony": {
 		"name": "Ceremony",
 		"level": 1,
-		"components": "V, S, M, g, p",
+		"components": "V, S, M",
 		"casting_time": "1 hour",
 		"class": [
 			"Cleric",
@@ -1557,7 +1557,7 @@ var DND5_SPELLS = {
 	"Chromatic Orb": {
 		"name": "Chromatic Orb",
 		"level": 1,
-		"components": "V, S, M, g, p",
+		"components": "V, S, M",
 		"casting_time": "1 action",
 		"class": [
 			"Sorcerer",
@@ -1580,7 +1580,7 @@ var DND5_SPELLS = {
 			"When you cast this spell using a spell slot of 7th level or higher, the damage increases by 2d6 for each slot level above 6th."
 		],
 		"range": "150 feet",
-		"components": "V, S, M, g, p",
+		"components": "V, S, M",
 		"material": "The powder of a crushed black pearl worth at least 500 gp.",
 		"ritual": false,
 		"duration": "Instantaneous",
@@ -1623,7 +1623,7 @@ var DND5_SPELLS = {
 			"A creature that can see the sensor (such as a creature benefiting from see invisibility or truesight) sees a luminous, intangible orb about the size of your fist."
 		],
 		"range": "1 mile",
-		"components": "V, S, M, g, p",
+		"components": "V, S, M, title,
 		"material": "A focus worth at least 100gp, either a jeweled horn for hearing or a glass eye for seeing.",
 		"ritual": false,
 		"duration": "up to 10 minutes",
@@ -1652,7 +1652,7 @@ var DND5_SPELLS = {
 			"At any time after the clone matures, if the original creature dies, its soul transfers to the clone, provided that the soul is free and willing to return. The clone is physically identical to the original and has the same personality, memories, and abilities, but none of the original's equipment. The original creature's physical remains, if they still exist, become inert and can't thereafter be restored to life, since the creature's soul is elsewhere."
 		],
 		"range": "Touch",
-		"components": "V, S, M, g, p",
+		"components": "V, S, M",
 		"material": "A diamond worth at least 1,000 gp and at least 1 cubic inch of flesh of the creature that is to be cloned, which the spell consumes, and a vessel worth at least 2,000 gp that has a sealable lid and is large enough to hold a Medium creature, such as a huge urn, coffin, mud-filled cyst in the ground, or crystal container filled with salt water.",
 		"ritual": false,
 		"duration": "Instantaneous",
@@ -2267,7 +2267,7 @@ var DND5_SPELLS = {
 			"The contingent spell takes effect only on you, even if it can normally target others. You can use only one contingency spell at a time. If you cast this spell again, the effect of another contingency spell on you ends. Also, contingency ends on you if its material component is ever not on your person."
 		],
 		"range": "Self",
-		"components": "V, S, M, g, p",
+		"components": "V, S, M",
 		"material": "A statuette of yourself carved from ivory and decorated with gems worth at least 1,500 gp.",
 		"ritual": false,
 		"duration": "10 days",
@@ -2290,7 +2290,7 @@ var DND5_SPELLS = {
 			"A flame, equivalent in brightness to a torch, springs forth from an object that you touch. The effect looks like a regular flame, but it creates no heat and doesn't use oxygen. A continual flame can be covered or hidden but not smothered or quenched."
 		],
 		"range": "Touch",
-		"components": "V, S, M, g, p",
+		"components": "V, S, M",
 		"material": "Ruby dust worth 50 gp, which the spell consumes.",
 		"ritual": false,
 		"duration": "Until dispelled",
@@ -2503,7 +2503,7 @@ var DND5_SPELLS = {
 	"Create Homunculus": {
 		"name": "Create Homunculus",
 		"level": 6,
-		"components": "V, S, M, g, p",
+		"components": "V, S, M",
 		"casting_time": "1 hour",
 		"class": [
 			"Wizard"
@@ -2527,7 +2527,7 @@ var DND5_SPELLS = {
 			"When you cast this spell using a 7th-level spell slot, you can animate or reassert control over four ghouls. When you cast this spell using an 8th-level spell slot, you can animate or reassert control over five ghouls or two ghasts or wights. When you cast this spell using a 9th-level spell slot, you can animate or reassert control over six ghouls, three ghasts or wights, or two mummies."
 		],
 		"range": "10 feet",
-		"components": "V, S, M, g, p",
+		"components": "V, S, M",
 		"material": "One clay pot filled with grave dirt, one clay pot filled with brackish water, and one 150 gp black onyx stone for each corpse.",
 		"ritual": false,
 		"duration": "Instantaneous",
@@ -2813,7 +2813,7 @@ var DND5_SPELLS = {
 	"Dawn": {
 		"name": "Dawn",
 		"level": 5,
-		"components": "V, S, M, g, p",
+		"components": "V, S, M",
 		"casting_time": "1 action",
 		"class": [
 			"Cleric",
@@ -3247,7 +3247,7 @@ var DND5_SPELLS = {
 			"If you cast the spell two or more times before finishing your next long rest, there is a cumulative 25 percent chance for each casting after the first that you get a random reading. The DM makes this roll in secret."
 		],
 		"range": "Self",
-		"components": "V, S, M, g, p",
+		"components": "V, S, M",
 		"material": "Incense and a sacrificial offering appropriate to your religion, together worth at least 25gp, which the spell consumes.",
 		"ritual": true,
 		"duration": "Instantaneous",
@@ -3426,7 +3426,7 @@ var DND5_SPELLS = {
 	"Drawmij's Instant Summons": {
 		"name": "Drawmij's Instant Summons",
 		"level": 6,
-		"components": "V, S, M, g, p",
+		"components": "V, S, M",
 		"casting_time": "1 minute",
 		"class": [
 			"Wizard"
@@ -4213,7 +4213,7 @@ var DND5_SPELLS = {
 			"Finally, when you cast a spell with a range of touch, your familiar can deliver the spell as if it had cast the spell. Your familiar must be within 100 feet of you, and it must use its reaction to deliver the spell when you cast it. If the spell requires an attack roll, you use your action modifier for the roll."
 		],
 		"range": "10 feet",
-		"components": "V, S, M, g, p",
+		"components": "V, S, M",
 		"material": "10gp worth of charcoal, incense, and herbs that must be consumed by fire in a brass brazier.",
 		"ritual": true,
 		"duration": "Instantaneous",
@@ -4308,7 +4308,7 @@ var DND5_SPELLS = {
 			"For the duration, as long as you are on the same plane of existence as the destination, you know how far it is and in what direction it lies. While you are traveling there, whenever you are presented with a choice of paths along the way, you automatically determine which path is the shortest and most direct route (but not necessarily the safest route) to the destination."
 		],
 		"range": "Self",
-		"components": "V, S, M, g, p",
+		"components": "V, S, M",
 		"material": "A set of divinatory toolsâ€”such as bones, ivory sticks, cards, teeth, or carved runesâ€”worth 100gp and an object from the location you wish to find.",
 		"ritual": false,
 		"duration": "up to 24 hours",
@@ -4694,7 +4694,7 @@ var DND5_SPELLS = {
 			"The spell's area can't overlap with the area of another forbiddance spell. If you cast forbiddance every day for 30 days in the same location, the spell lasts until it is dispelled, and the material components are consumed on the last casting."
 		],
 		"range": "Touch",
-		"components": "V, S, M, g, p",
+		"components": "V, S, M",
 		"material": "A sprinkling of holy water, rare incense, and powdered ruby worth at least 1,000 gp.",
 		"ritual": true,
 		"duration": "24 hours",
@@ -4722,7 +4722,7 @@ var DND5_SPELLS = {
 			"This spell can't be dispelled by dispel magic."
 		],
 		"range": "100 feet",
-		"components": "V, S, M, g, p",
+		"components": "V, S, M",
 		"material": "Ruby dust worth 1,500 gp.",
 		"ritual": false,
 		"duration": "1 hour",
@@ -4904,7 +4904,7 @@ var DND5_SPELLS = {
 			"When you cast this spell, you can speak the name of a specific creature (a pseudonym, title, or nickname doesn't work). If that creature is on a plane other than the one you are on, the portal opens in the named creature's immediate vicinity and draws the creature through it to the nearest unoccupied space on your side of the portal. You gain no special power over the creature, and it is free to act as the DM deems appropriate. It might leave, attack you, or help you."
 		],
 		"range": "60 feet",
-		"components": "V, S, M, g, p",
+		"components": "V, S, M",
 		"material": "A diamond worth at least 5,000gp.",
 		"ritual": false,
 		"duration": "up to 1 minute",
@@ -5074,7 +5074,7 @@ var DND5_SPELLS = {
 			"When you cast this spell using a 4 or higher is level, the damage explosive runes increased by 1d8 for each level of top slot 3. If you create a glyph spell, you may store a spell whose level is equivalent or less to spell slot used for the custody of the glyph."
 		],
 		"range": "Touch",
-		"components": "V, S, M, g, p",
+		"components": "V, S, M",
 		"material": "Incense and powdered diamond worth at least 200 gp, the spell consumes.",
 		"ritual": false,
 		"duration": "Until dispelled",
@@ -5201,7 +5201,7 @@ var DND5_SPELLS = {
 			"- One effect reducing the target's hit point maximum"
 		],
 		"range": "Touch",
-		"components": "V, S, M, g, p",
+		"components": "V, S, M",
 		"material": "Diamond dust worth at least 100gp, which the spell consumes.",
 		"ritual": false,
 		"duration": "Instantaneous",
@@ -5301,7 +5301,7 @@ var DND5_SPELLS = {
 			"You can create a permanently guarded and warded structure by casting this spell there every day for one year."
 		],
 		"range": "Touch",
-		"components": "V, S, M, g, p",
+		"components": "V, S, M",
 		"material": "Burning incense, a small measure of brimstone and oil, a knotted string, a small amount of umber hulk blood, and a small silver rod worth at least 10 gp.",
 		"ritual": false,
 		"duration": "24 hours",
@@ -5464,7 +5464,7 @@ var DND5_SPELLS = {
 			" Affected creatures can communicate with any other creature in the area, even if they don't share a common language."
 		],
 		"range": "Touch",
-		"components": "V, S, M, g, p",
+		"components": "V, S, M",
 		"material": "Herbs, oils, and incense worth at least 1,000 gp, which the spell consumes.",
 		"ritual": false,
 		"duration": "Until dispelled",
@@ -5695,7 +5695,7 @@ var DND5_SPELLS = {
 			"A creature that partakes of the feast gains several benefits. The creature is cured of all diseases and poison, becomes immune to poison and being frightened, and makes all wisdom saving throws with advantage. Its hit point maximum also increases by 2d10, and it gains the same number of hit points. These benefits last for 24 hours."
 		],
 		"range": "30 feet",
-		"components": "V, S, M, g, p",
+		"components": "V, S, M",
 		"material": "A gem-encrusted bowl worth at least 1,000gp, which the spell consumes.",
 		"ritual": false,
 		"duration": "Instantaneous",
@@ -5849,7 +5849,7 @@ var DND5_SPELLS = {
 			"Divine light washes out from you and coalesces in a soft radiance in a 30-foot radius around you. Creatures of your choice in that radius when you cast this spell shed dim light in a 5-foot radius and have advantage on all saving throws, and other creatures have disadvantage on attack rolls against them until the spell ends. In addition, when a fiend or an undead hits an affected creature with a melee attack, the aura flashes with brilliant light. The attacker must succeed on a constitution saving throw or be blinded until the spell ends."
 		],
 		"range": "Self",
-		"components": "V, S, M, g, p",
+		"components": "V, S, M",
 		"material": "A tiny reliquary worth at least 1,000gp containing a sacred relic, such as a scrap of cloth from a saint's robe or a piece of parchment from a religious text.",
 		"ritual": false,
 		"duration": "up to 1 minute",
@@ -6007,7 +6007,7 @@ var DND5_SPELLS = {
 			"If you instead touch a creature throughout the casting, you learn what spells, if any, are currently affecting it."
 		],
 		"range": "Touch",
-		"components": "V, S, M, g, p",
+		"components": "V, S, M",
 		"material": "A pearl worth at least 100gp and an owl feather.",
 		"ritual": true,
 		"duration": "Instantaneous",
@@ -6053,7 +6053,7 @@ var DND5_SPELLS = {
 			"A creature with truesight can read the hidden message."
 		],
 		"range": "Touch",
-		"components": "S, M, g, p",
+		"components": "S, M",
 		"material": "A lead-based ink worth at least 10gp, which this spell consumes.",
 		"ritual": true,
 		"duration": "10 days",
@@ -6112,7 +6112,7 @@ var DND5_SPELLS = {
 			"You can use a particular special component to create only one prison at a time. If you cast the spell again using the same component, the target of the first casting is immediately freed from its binding."
 		],
 		"range": "30 feet",
-		"components": "V, S, M, g, p",
+		"components": "V, S, M",
 		"material": "A vellum depiction or a carved statuette in the likeness of the target, and a special component that varies according to the version of the spell you choose, worth at least 500gp per Hit Die of the target.",
 		"ritual": false,
 		"duration": "Until dispelled",
@@ -6158,7 +6158,7 @@ var DND5_SPELLS = {
 	"Infernal Calling": {
 		"name": "Infernal Calling",
 		"level": 5,
-		"components": "V, S, M, g, p",
+		"components": "V, S, M",
 		"casting_time": "1 minute",
 		"class": [
 			"Warlock",
@@ -6389,7 +6389,7 @@ var DND5_SPELLS = {
 	"Invulnerability": {
 		"name": "Invulnerability",
 		"level": 9,
-		"components": "V, S, M, g, p",
+		"components": "V, S, M",
 		"casting_time": "1 action",
 		"class": [
 			"Wizard"
@@ -6490,7 +6490,7 @@ var DND5_SPELLS = {
 			"What you learn is accurate but can be hidden in figurative language. For example, if you have a mysterious magical ax in your hand, the spell can reveal this information: \"Woe to the wicked that affects his hands the ax because the handle decide those of malignant Only a true child of the stone magnet. and loved Moradin could awaken the true power of this ax, and only with the sacred Rudnogg word on the lips.\""
 		],
 		"range": "Self",
-		"components": "V, S, M, g, p",
+		"components": "V, S, M",
 		"material": "Incense worth 250 inches that fate consumes and four sticks of ivory worth 50 gp each.",
 		"ritual": false,
 		"duration": "Instantaneous",
@@ -6512,7 +6512,7 @@ var DND5_SPELLS = {
 	"Leomund's Secret Chest": {
 		"name": "Leomund's Secret Chest",
 		"level": 4,
-		"components": "V, S, M, g, p",
+		"components": "V, S, M",
 		"casting_time": "1 action",
 		"class": [
 			"Artificer",
@@ -6940,7 +6940,7 @@ var DND5_SPELLS = {
 			"When you cast this spell using a spell slot of 4th level or higher, the duration increases by 1 hour for each slot level above 3rd."
 		],
 		"range": "10 feet",
-		"components": "V, S, M, g, p",
+		"components": "V, S, M",
 		"material": "Holy water or powdered silver and iron worth at least 100 gp, which the spell consumes.",
 		"ritual": false,
 		"duration": "1 hour",
@@ -6974,7 +6974,7 @@ var DND5_SPELLS = {
 			"When the spell ends, the container is destroyed."
 		],
 		"range": "Self",
-		"components": "V, S, M, g, p",
+		"components": "V, S, M",
 		"material": "A gem, crystal, reliquary, or some other ornamental container worth at least 500 gp.",
 		"ritual": false,
 		"duration": "Until dispelled",
@@ -7028,7 +7028,7 @@ var DND5_SPELLS = {
 			"The triggering circumstance can be as general or as detailed as you like, though it must be based on visual or audible conditions that occur within 30 feet of the object. For example, you could instruct the mouth to speak when any creature moves within 30 feet of the object or when a silver bell rings within 30 feet of it."
 		],
 		"range": "30 feet",
-		"components": "V, S, M, g, p",
+		"components": "V, S, M",
 		"material": "A honeycomb and jade dust of at least 10 inches, the spell consumes.",
 		"ritual": true,
 		"duration": "Until dispelled",
@@ -7491,7 +7491,7 @@ var DND5_SPELLS = {
 	"Mighty Fortress": {
 		"name": "Mighty Fortress",
 		"level": 8,
-		"components": "V, S, M, g, p",
+		"components": "V, S, M",
 		"casting_time": "1 minute",
 		"class": [
 			"Wizard"
@@ -7785,7 +7785,7 @@ var DND5_SPELLS = {
 	"Mordenkainen's Magnificent Mansion": {
 		"name": "Mordenkainen's Magnificent Mansion",
 		"level": 7,
-		"components": "V, S, M, g, p",
+		"components": "V, S, M",
 		"casting_time": "1 minute",
 		"class": [
 			"Bard",
@@ -7819,7 +7819,7 @@ var DND5_SPELLS = {
 	"Mordenkainen's Sword": {
 		"name": "Mordenkainen's Sword",
 		"level": 7,
-		"components": "V, S, M, g, p",
+		"components": "V, S, M",
 		"casting_time": "1 action",
 		"class": [
 			"Bard",
@@ -7885,7 +7885,7 @@ var DND5_SPELLS = {
 			"For the duration, you hide a target that you touch from divination magic. The target can be a willing creature or a place or an object no larger than 10 feet in any dimension. The target can't be targeted by any divination magic or perceived through magical scrying sensors."
 		],
 		"range": "Touch",
-		"components": "V, S, M, g, p",
+		"components": "V, S, M",
 		"material": "A pinch of diamond dust worth 25 gp sprinkled over the target, which the spell consumes.",
 		"ritual": false,
 		"duration": "8 hours",
@@ -8130,7 +8130,7 @@ var DND5_SPELLS = {
 			"When you cast this spell using a spell slot of a higher level, the duration increases to 10 days with a 6th-level slot, to 30 days with a 7th-level slot, to 180 days with an 8th-level slot, and to a year and a day with a 9th-level spell slot."
 		],
 		"range": "60 feet",
-		"components": "V, S, M, g, p",
+		"components": "V, S, M",
 		"material": "A jewel worth at least 1,000 gp, which the spell consumes.",
 		"ritual": false,
 		"duration": "24 hours",
@@ -8158,7 +8158,7 @@ var DND5_SPELLS = {
 			"You can use this spell to banish an unwilling creature to another plane. Choose a creature within your reach and make a melee spell attack against it. On a hit, the creature must make a charisma saving throw. If the creature fails this save, it is transported to a random location on the plane of existence you specify. A creature so transported must find its own way back to your current plane of existence."
 		],
 		"range": "Touch",
-		"components": "V, S, M, g, p",
+		"components": "V, S, M",
 		"material": "A forked, metal rod worth at least 250 gp, attuned to a particular plane of existence.",
 		"ritual": false,
 		"duration": "Instantaneous",
@@ -8592,7 +8592,7 @@ var DND5_SPELLS = {
 			"Physical interaction with the image reveals it to be an illusion, because things can pass through it. A creature that uses its action to examine the image can determine that it is an illusion with a successful Intelligence (Investigation) check against your spell save DC. If a creature discerns the illusion for what it is, the creature can see through the image, and any noise it makes sounds hollow to the creature."
 		],
 		"range": "120 feet",
-		"components": "V, S, M, g, p",
+		"components": "V, S, M",
 		"material": "A bit of fleece and jade dust worth at least 25 gp.",
 		"ritual": false,
 		"duration": "Until dispelled",
@@ -8619,7 +8619,7 @@ var DND5_SPELLS = {
 			"Physical interaction with the image reveals it to be an illusion, because things can pass through it. A creature that uses its action to examine the image can determine that it is an illusion with a successful Intelligence (Investigation) check against your spell save DC. If a creature discerns the illusion for what it is, the creature can see through the image, and any noise it makes sounds hollow to the creature."
 		],
 		"range": "500 miles",
-		"components": "V, S, M, g, p",
+		"components": "V, S, M",
 		"material": "A small replica of you made from materials worth at least 5 gp.",
 		"ritual": false,
 		"duration": "up to 24 hours",
@@ -8801,7 +8801,7 @@ var DND5_SPELLS = {
 			"Coming back from the dead is an ordeal. The target takes a -4 penalty to all attack rolls, saving throws, and ability checks. Every time the target finishes a long rest, the penalty is reduced by 1 until it disappears."
 		],
 		"range": "Touch",
-		"components": "V, S, M, g, p",
+		"components": "V, S, M",
 		"material": "A diamond worth at least 500gp, which the spell consumes.",
 		"ritual": false,
 		"duration": "Instantaneous",
@@ -8970,7 +8970,7 @@ var DND5_SPELLS = {
 			"The reincarnated creature recalls its former life and experiences. It retains the capabilities it had in its original form, except it exchanges its original race for the new one and changes its racial traits accordingly."
 		],
 		"range": "Touch",
-		"components": "V, S, M, g, p",
+		"components": "V, S, M",
 		"material": "Rare oils and unguents worth at least 1,000 gp, which the spell consumes.",
 		"ritual": false,
 		"duration": "Instantaneous",
@@ -9076,7 +9076,7 @@ var DND5_SPELLS = {
 			"Casting this spell to restore life to a creature that has been dead for one year or longer taxes you greatly. Until you finish a long rest, you can't cast spells again, and you have disadvantage on all attack rolls, ability checks, and saving throws."
 		],
 		"range": "Touch",
-		"components": "V, S, M, g, p",
+		"components": "V, S, M",
 		"material": "A diamond worth at least 1,000gp, which the spell consumes.",
 		"ritual": false,
 		"duration": "Instantaneous",
@@ -9127,7 +9127,7 @@ var DND5_SPELLS = {
 			"You touch a creature that has died within the last minute. That creature returns to life with 1 hit point. This spell can't return to life a creature that has died of old age, nor can it restore any missing body parts."
 		],
 		"range": "Touch",
-		"components": "V, S, M, g, p",
+		"components": "V, S, M",
 		"material": "Diamonds worth 300gp, which the spell consumes.",
 		"ritual": false,
 		"duration": "Instantaneous",
@@ -9298,7 +9298,7 @@ var DND5_SPELLS = {
 			"Instead of targeting a creature, you can choose a location you have seen before as the target of this spell. When you do, the sensor appears at that location and doesn't move."
 		],
 		"range": "Self",
-		"components": "V, S, M, g, p",
+		"components": "V, S, M",
 		"material": "A focus worth at least 1,000 gp, such as a crystal ball, a silver mirror, or a font filled with holy water.",
 		"ritual": false,
 		"duration": "up to 10 minutes",
@@ -9452,7 +9452,7 @@ var DND5_SPELLS = {
 			"You can set a condition for the spell to end early. The condition can be anything you choose, but it must occur or be visible within 1 mile of the target. Examples include â€œafter 1,000 yearsâ€� or â€œwhen the tarrasque awakens.â€� This spell also ends if the target takes any damage."
 		],
 		"range": "Touch",
-		"components": "V, S, M, g, p",
+		"components": "V, S, M",
 		"material": "A powder composed of diamond, emerald, ruby, and sapphire dust worth at least 5,000 gp, which the spell consumes.",
 		"ritual": false,
 		"duration": "Until dispelled",
@@ -9490,7 +9490,7 @@ var DND5_SPELLS = {
 	"Shadow of Moil": {
 		"name": "Shadow of Moil",
 		"level": 4,
-		"components": "V, S, M, g, p",
+		"components": "V, S, M",
 		"casting_time": "1 action",
 		"class": [
 			"Warlock"
@@ -9531,7 +9531,7 @@ var DND5_SPELLS = {
 			"During this spell's duration, you can use your action to assume a different form following the same restrictions and rules for the original form, with one exception: if your new form has more hit points than your current one, your hit points remain at their current value."
 		],
 		"range": "Self",
-		"components": "V, S, M, g, p",
+		"components": "V, S, M",
 		"material": "A jade circlet worth at least 1,500 gp, which you must place on your head before you cast the spell.",
 		"ritual": false,
 		"duration": "up to 1 hour",
@@ -9768,7 +9768,7 @@ var DND5_SPELLS = {
 			"If you cast this spell again, any currently active duplicates you created with this spell are instantly destroyed."
 		],
 		"range": "Touch",
-		"components": "V, S, M, g, p",
+		"components": "V, S, M",
 		"material": "Snow or ice in quantities sufficient to made a life-size copy of the duplicated creature; some hair, fingernail clippings, or other piece of that creature's body placed inside the snow or ice; and powdered ruby worth 1,500 gp, sprinkled over the duplicate and consumed by the spell.",
 		"ritual": false,
 		"duration": "Until dispelled",
@@ -9919,7 +9919,7 @@ var DND5_SPELLS = {
 	"Snare": {
 		"name": "Snare",
 		"level": 1,
-		"components": "S, M, g, p",
+		"components": "S, M",
 		"casting_time": "1 minute",
 		"class": [
 			"Artificer",
@@ -9956,7 +9956,7 @@ var DND5_SPELLS = {
 	"Soul Cage": {
 		"name": "Soul Cage",
 		"level": 6,
-		"components": "V, S, M, g, p",
+		"components": "V, S, M",
 		"casting_time": "1 reaction",
 		"class": [
 			"Warlock",
@@ -10211,7 +10211,7 @@ var DND5_SPELLS = {
 	"Steel Wind Strike": {
 		"name": "Steel Wind Strike",
 		"level": 5,
-		"components": "S, M, g, p",
+		"components": "S, M",
 		"casting_time": "1 action",
 		"class": [
 			"Ranger",
@@ -10290,7 +10290,7 @@ var DND5_SPELLS = {
 			"This spell turns the flesh of a willing creature you touch as hard as stone. Until the spell ends, the target has resistance to nonmagical bludgeoning, piercing, and slashing damage."
 		],
 		"range": "Touch",
-		"components": "V, S, M, g, p",
+		"components": "V, S, M",
 		"material": "Diamond dust worth 100 gp, which the spell consumes.",
 		"ritual": false,
 		"duration": "up to 1 hour",
@@ -10540,7 +10540,7 @@ var DND5_SPELLS = {
 			" Each target must make a wisdom saving throw and becomes stunned for 1 minute on a failed save."
 		],
 		"range": "Touch",
-		"components": "V, S, M, g, p",
+		"components": "V, S, M",
 		"material": "Mercury, phosphorus, and powdered diamond and opal with a total value of at least 1,000 gp, which the spell consumes.",
 		"ritual": false,
 		"duration": "Until dispelled",
@@ -10697,7 +10697,7 @@ var DND5_SPELLS = {
 			"You can create a permanent teleportation circle by casting this spell in the same location every day for one year. You need not use the circle to teleport when you cast the spell in this way."
 		],
 		"range": "10 feet",
-		"components": "V, M, g, p",
+		"components": "V, M",
 		"material": "Rare chalks and inks infused with precious gems with 50 gp, which the spell consumes.",
 		"ritual": false,
 		"duration": "1 round",
@@ -10719,7 +10719,7 @@ var DND5_SPELLS = {
 	"Temple of the Gods": {
 		"name": "Temple of the Gods",
 		"level": 7,
-		"components": "V, S, M, g, p",
+		"components": "V, S, M",
 		"casting_time": "1 hour",
 		"class": [
 			"Cleric"
@@ -11141,7 +11141,7 @@ var DND5_SPELLS = {
 			"The spell can even provide a new body if the original no longer exists, in which case you must speak the creature's name. The creature then appears in an unoccupied space you choose within 10 feet of you."
 		],
 		"range": "Touch",
-		"components": "V, S, M, g, p",
+		"components": "V, S, M",
 		"material": "A sprinkle of holy water and diamonds worth at least 25,000gp, which the spell consumes.",
 		"ritual": false,
 		"duration": "Instantaneous",
@@ -11165,7 +11165,7 @@ var DND5_SPELLS = {
 			"This spell gives the willing creature you touch the ability to see things as they actually are. For the duration, the creature has truesight, notices secret doors hidden by magic, and can see into the Ethereal Plane, all out to a range of 120 feet."
 		],
 		"range": "Touch",
-		"components": "V, S, M, g, p",
+		"components": "V, S, M",
 		"material": "An ointment for the eyes that costs 25gp; is made from mushroom powder, saffron, and fat; and is consumed by the spell.",
 		"ritual": false,
 		"duration": "1 hour",
@@ -11536,7 +11536,7 @@ var DND5_SPELLS = {
 			"It also ends if the spell is cast again on either of the connected creatures. You can also dismiss the spell as an action."
 		],
 		"range": "Touch",
-		"components": "V, S, M, g, p",
+		"components": "V, S, M",
 		"material": "A pair of platinum rings worth at least 50gp each, which you and the target must wear for the duration.",
 		"ritual": false,
 		"duration": "1 hour",
