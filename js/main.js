@@ -604,11 +604,11 @@ var edit_item_dialog = function (item) {
 	var $content = $(
 		'<div class="form">' +
 			'<div class="form-field">' +
-				'<label>Name</label>' +
+				'<label for="item-name">Name</label>' +
 				'<input id="item-name" type="text" class="input">' +
 			'</div>' +
 			'<div class="form-field">' +
-				'<label>Type</label>' +
+				'<label for="item-type">Type</label>' +
 				'<select id="item-type" class="select">' +
 					'<option>Armor</option>' +
 					'<option>Potion</option>' +
@@ -621,7 +621,7 @@ var edit_item_dialog = function (item) {
 				'</select>' +
 			'</div>' +
 			'<div class="form-field">' +
-				'<label>Rarity</label>' +
+				'<label for="item-rarity">Rarity</label>' +
 				'<select id="item-rarity" class="select">' +
 					'<option>Common</option>' +
 					'<option>Uncommon</option>' +
@@ -631,14 +631,14 @@ var edit_item_dialog = function (item) {
 				'</select>' +
 			'</div>' +
 			'<div class="form-field">' +
-				'<label>Requires Attunement</label>' +
+				'<label for="item-attunement">Requires Attunement</label>' +
 				'<select id="item-attunement" class="select">' +
 					'<option value="no">No</option>' +
 					'<option value="yes">Yes</option>' +
 				'</select>' +
 			'</div>' +
 			'<div class="form-field">' +
-				'<label>Description</label>' +
+				'<label for="item-desc">Description</label>' +
 				'<textarea id="item-desc" rows="10" class="input"></textarea>' +
 			'</div>' +
 		'</div>');
@@ -736,14 +736,14 @@ var render_pc_preview = function ($preview, pc_id, pc_object) {
 				'<button data-action="edit-pc" data-pc="' + pc.id + '" class="button">Edit</button>' +
 			'</div>' +
 			'<h2 class="h2 h2-dnd">' + html_encode(pc.name || '-') + '</h2>' +
-			'<p class="p">' + html_encode(pc.desc || '-') + '</p>' +
 			'<ul style="list-style: none outside none">' +
 				'<li><span class="font-bold">Level</span> ' + html_encode(pc.level || '-') + '</li>' +
 				'<li><span class="font-bold">Armor Class</span> ' + html_encode(pc.armor_class || '-') + '</li>' +
 				'<li><span class="font-bold">Hit Points</span> ' + html_encode(pc.hit_points || '-') + '</li>' +
 				'<li><span class="font-bold">Speed</span> ' + html_encode(pc.speed || '-') + '</li>' +
 				'<li><span class="font-bold">Passive Perception</span> ' + html_encode(pc.passive_perception || '-') + '</li>' +
-			'</ul>');
+			'</ul>' +
+			'<p class="p">' + html_encode(pc.desc || '-') + '</p>');
 	}
 };
 
@@ -753,10 +753,6 @@ var edit_pc_dialog = function (pc) {
 			'<div class="form-field">' +
 				'<label for="pc-name">Name</label>' +
 				'<input id="pc-name" type="text" class="input">' +
-			'</div>' +
-			'<div class="form-field">' +
-				'<label for="pc-desc">Description</label>' +
-				'<input id="pc-desc" type="text" class="input">' +
 			'</div>' +
 			'<div class="form-field">' +
 				'<label for="pc-level">Level</label>' +
@@ -799,15 +795,19 @@ var edit_pc_dialog = function (pc) {
 				'<label for="pc-passive_perception">Passive Perception</label>' +
 				'<input id="pc-passive_perception" type="number" value="10" class="input">' +
 			'</div>' +
+			'<div class="form-field">' +
+				'<label for="pc-desc">Description</label>' +
+				'<textarea id="pc-desc" rows="10" class="input"></textarea>' +
+			'</div>' +
 		'</div>');
 	if (pc) {
 		$content.find('#pc-name').val(pc.name);
-		$content.find('#pc-desc').val(pc.desc);
 		$content.find('#pc-level').val(pc.level);
 		$content.find('#pc-armor_class').val(pc.armor_class);
 		$content.find('#pc-hit_points').val(pc.hit_points);
 		$content.find('#pc-speed').val(pc.speed);
 		$content.find('#pc-passive_perception').val(pc.passive_perception);
+		$content.find('#pc-desc').val(pc.desc);
 	}
 	var buttons = [];
 	buttons.push({
@@ -837,11 +837,6 @@ var edit_pc_dialog = function (pc) {
 				open_dialog({ title: 'Warning', content: 'Invalid name.' });
 				return;
 			}
-			var desc = $content.find('#pc-desc').val().trim();
-			if (!desc || desc === '') {
-				open_dialog({ title: 'Warning', content: 'Invalid description.' });
-				return;
-			}
 			var level = parseInt($content.find('#pc-level').val(), 10);
 			if (!level || isNaN(level) || level <= 0) {
 				open_dialog({ title: 'Warning', content: 'Invalid level.' });
@@ -867,15 +862,20 @@ var edit_pc_dialog = function (pc) {
 				open_dialog({ title: 'Warning', content: 'Invalid passive perception.' });
 				return;
 			}
+			var desc = $content.find('#pc-desc').val().trim();
+			if (!desc || desc === '') {
+				open_dialog({ title: 'Warning', content: 'Invalid description.' });
+				return;
+			}
 			var new_pc = {
 				id: pc ? pc.id : random_id(),
 				name: name,
-				desc: desc,
 				level: level,
 				armor_class: armor_class,
 				hit_points: hit_points,
 				speed: speed,
-				passive_perception: passive_perception
+				passive_perception: passive_perception,
+				desc: desc
 			}
 			CAMPAIGN.pcs[new_pc.id] = new_pc;
 			render_pcs_list($('#campaign-pcs-list'), CAMPAIGN.pcs);
@@ -983,11 +983,11 @@ var edit_encounter_dialog = function (encounter) {
 	var $content = $(
 		'<div class="form">' +
 			'<div class="form-field">' +
-				'<label>Name</label>' +
+				'<label for="encounter-name">Name</label>' +
 				'<input id="encounter-name" type="text" class="input">' +
 			'</div>' +
 			'<div class="form-field">' +
-				'<label>Description</label>' +
+				'<label for="encounter-desc">Description</label>' +
 				'<textarea id="encounter-desc" rows="10" class="input"></textarea>' +
 			'</div>' +
 		'</div>');
@@ -1129,11 +1129,11 @@ var edit_note_dialog = function (note) {
 	var $content = $(
 		'<div class="form">' +
 			'<div class="form-field">' +
-				'<label>Name</label>' +
+				'<label for="note-name">Name</label>' +
 				'<input id="note-name" type="text" class="input">' +
 			'</div>' +
 			'<div class="form-field">' +
-				'<label>Description</label>' +
+				'<label for="note-desc">Description</label>' +
 				'<textarea id="note-desc" rows="10" class="input"></textarea>' +
 			'</div>' +
 		'</div>');
