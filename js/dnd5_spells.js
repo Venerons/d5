@@ -1623,7 +1623,7 @@ var DND5_SPELLS = {
 			"A creature that can see the sensor (such as a creature benefiting from see invisibility or truesight) sees a luminous, intangible orb about the size of your fist."
 		],
 		"range": "1 mile",
-		"components": "V, S, M, title,
+		"components": "V, S, M",
 		"material": "A focus worth at least 100gp, either a jeweled horn for hearing or a glass eye for seeing.",
 		"ritual": false,
 		"duration": "up to 10 minutes",
