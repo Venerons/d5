@@ -74,11 +74,7 @@ var html_encode = function (string) {
 		var c = string.charAt(i),
 			entity = entities[c];
 		if (c === ' ') {
-			if (i > 0 && string.charAt(i - 1) === ' ') {
-				output += entity;
-			} else {
-				output += c;
-			}
+			output += string.charAt(i - 1) === ' ' ? entity : c;
 		} else if (entity) {
 			output += entity;
 		} else {
@@ -156,6 +152,47 @@ var goto_page = function (page_id) {
 	$('[data-page-id="' + page_id + '"]').show();
 };
 
+// example: 1d6 = dice(1, 6)
+// example: 1rps = dice(1, ['rock', 'paper', 'scissors'])
+var dice = function (num, values) {
+	var result = [];
+	for (var i = 0; i < num; ++i) {
+		if (values instanceof Array) {
+			result.push(values[Math.floor(Math.random() * values.length)]);
+		} else {
+			result.push(Math.floor(Math.random() * values) + 1);
+		}
+	}
+	if (values instanceof Array) {
+		if (result.length === 1) {
+			result = result[0];
+		}
+	} else  {
+		var sum = 0;
+		result.forEach(function (value) {
+			sum += value;
+		});
+		result = sum;
+	}
+	return result;
+};
+
+// example: dice_expression('3d6+2+45d2')
+var dice_expression = function (expression) {
+	var result = 'Evaluation Error';
+	try {
+		result = eval(expression.replace(/[0-9]+d[0-9]+/g, function (a) {
+			var tokens = a.split('d'),
+				q = parseInt(tokens[0], 10),
+				f = parseInt(tokens[1], 10);
+			return dice(q, f);
+		}));
+	} catch (e) {
+		console.error(e);
+	}
+	return result;
+};
+
 var get_modifier = function (value) {
 	return Math.floor((value - 10) / 2);
 };
@@ -199,7 +236,7 @@ var filter_monsters_list = function ($monsters_list, filter, pattern) {
 			$li.show();
 		} else {
 			var monster_id = $li.data('monster'),
-				monster = CAMPAIGN.npcs[monster_id] || DND5_MONSTERS[monster_id];
+				monster = CAMPAIGN.characters[monster_id] || DND5_MONSTERS[monster_id];
 			if (!monster) {
 				$li.hide();
 			} else {
@@ -224,7 +261,7 @@ var render_monster_preview = function ($preview, monster_id, monster_object) {
 	}
 	var monster;
 	if (monster_id) {
-		monster = CAMPAIGN.npcs[monster_id];
+		monster = CAMPAIGN.characters[monster_id];
 	} else if (monster_object) {
 		monster = monster_object;
 	}
@@ -345,7 +382,7 @@ var select_monster_dialog = function (callback) {
 	render_monsters_list($select_monster_list, DND5_MONSTERS);
 	$select_monster_list.on('click', 'li', function () {
 		var monster_id = $(this).data('monster'),
-			monster = CAMPAIGN.npcs[monster_id] || DND5_MONSTERS[monster_id];
+			monster = CAMPAIGN.characters[monster_id] || DND5_MONSTERS[monster_id];
 		dialog.close();
 		callback(monster);
 	});
@@ -371,7 +408,7 @@ var edit_monster_dialog = function (monster) {
 		});
 		return;
 	}
-	var action = CAMPAIGN.npcs[monster.id] ? 'edit' : 'add';
+	var action = CAMPAIGN.characters[monster.id] ? 'edit' : 'add';
 	var $content = $(
 		'<div class="form">' +
 			'<div class="form-field">' +
@@ -399,8 +436,8 @@ var edit_monster_dialog = function (monster) {
 			label: 'Delete',
 			class: 'button button-danger',
 			onclick: function () {
-				delete CAMPAIGN.npcs[monster.id];
-				render_monsters_list($('#campaign-monsters-list'), CAMPAIGN.npcs);
+				delete CAMPAIGN.characters[monster.id];
+				render_monsters_list($('#campaign-monsters-list'), CAMPAIGN.characters);
 				$('#campaign-monsters-preview').empty();
 				this.close();
 			}
@@ -426,14 +463,14 @@ var edit_monster_dialog = function (monster) {
 			}
 			new_monster.name = name;
 			new_monster.desc = desc;
-			CAMPAIGN.npcs[new_monster.id] = new_monster;
-			render_monsters_list($('#campaign-monsters-list'), CAMPAIGN.npcs);
+			CAMPAIGN.characters[new_monster.id] = new_monster;
+			render_monsters_list($('#campaign-monsters-list'), CAMPAIGN.characters);
 			$('#campaign-monsters-preview').empty();
 			this.close();
 		}
 	});
 	open_dialog({
-		title: action === 'edit' ? 'Edit Non Player Character' : 'Add Non Player Character',
+		title: action === 'edit' ? 'Edit Character' : 'Add Character',
 		content: $content,
 		buttons: buttons
 	});
@@ -703,10 +740,10 @@ var edit_item_dialog = function (item) {
 	});
 };
 
-var render_pcs_list = function ($list_block, set) {
+var render_characters_list = function ($list_block, set) {
 	$list_block.empty();
 	if (!set) {
-		set = CAMPAIGN.pcs;
+		set = CAMPAIGN.characters;
 	}
 	Object.keys(set).sort(function (a, b) {
 		return set[a].name < set[b].name ? -1 : 1;
@@ -719,332 +756,6 @@ var render_pcs_list = function ($list_block, set) {
 					'<div class="font-small font-gray font-italic">' + html_encode(pc.desc || '-') + '</div>' +
 				'</li>');
 		}
-	});
-};
-
-var render_pc_preview = function ($preview, pc_id, pc_object) {
-	var pc;
-	if (pc_id) {
-		pc = CAMPAIGN.pcs[pc_id];
-	} else if (pc_object) {
-		pc = pc_object;
-	}
-	if (pc && $preview) {
-		$preview.empty();
-		$preview.append(
-			'<div class="flex-row">' +
-				'<button data-action="edit-pc" data-pc="' + pc.id + '" class="button">Edit</button>' +
-			'</div>' +
-			'<h2 class="h2 h2-dnd">' + html_encode(pc.name || '-') + '</h2>' +
-			'<ul style="list-style: none outside none">' +
-				'<li><span class="font-bold">Level</span> ' + html_encode(pc.level || '-') + '</li>' +
-				'<li><span class="font-bold">Armor Class</span> ' + html_encode(pc.armor_class || '-') + '</li>' +
-				'<li><span class="font-bold">Hit Points</span> ' + html_encode(pc.hit_points || '-') + '</li>' +
-				'<li><span class="font-bold">Speed</span> ' + html_encode(pc.speed || '-') + '</li>' +
-				'<li><span class="font-bold">Passive Perception</span> ' + html_encode(pc.passive_perception || '-') + '</li>' +
-			'</ul>' +
-			'<p class="p">' + html_encode(pc.desc || '-') + '</p>');
-	}
-};
-
-var edit_pc_dialog = function (pc) {
-	var $content = $(
-		'<div class="form">' +
-			'<div class="form-field">' +
-				'<label for="pc-name">Name</label>' +
-				'<input id="pc-name" type="text" class="input">' +
-			'</div>' +
-			'<div class="form-field">' +
-				'<label for="pc-level">Level</label>' +
-				'<select id="pc-level" class="select">' +
-					'<option value="1">1</option>' +
-					'<option value="2">2</option>' +
-					'<option value="3">3</option>' +
-					'<option value="4">4</option>' +
-					'<option value="5">5</option>' +
-					'<option value="6">6</option>' +
-					'<option value="7">7</option>' +
-					'<option value="8">8</option>' +
-					'<option value="9">9</option>' +
-					'<option value="10">10</option>' +
-					'<option value="11">11</option>' +
-					'<option value="12">12</option>' +
-					'<option value="13">13</option>' +
-					'<option value="14">14</option>' +
-					'<option value="15">15</option>' +
-					'<option value="16">16</option>' +
-					'<option value="17">17</option>' +
-					'<option value="18">18</option>' +
-					'<option value="19">19</option>' +
-					'<option value="20">20</option>' +
-				'</select>' +
-			'</div>' +
-			'<div class="form-field">' +
-				'<label for="pc-armor_class">Armor Class</label>' +
-				'<input id="pc-armor_class" type="number" value="10" class="input">' +
-			'</div>' +
-			'<div class="form-field">' +
-				'<label for="pc-hit_points">Hit Points</label>' +
-				'<input id="pc-hit_points" type="number" value="1" class="input">' +
-			'</div>' +
-			'<div class="form-field">' +
-				'<label for="pc-speed">Speed</label>' +
-				'<input id="pc-speed" type="number" value="30" class="input">' +
-			'</div>' +
-			'<div class="form-field">' +
-				'<label for="pc-passive_perception">Passive Perception</label>' +
-				'<input id="pc-passive_perception" type="number" value="10" class="input">' +
-			'</div>' +
-			'<div class="form-field">' +
-				'<label for="pc-desc">Description</label>' +
-				'<textarea id="pc-desc" rows="10" class="input"></textarea>' +
-			'</div>' +
-		'</div>');
-	if (pc) {
-		$content.find('#pc-name').val(pc.name);
-		$content.find('#pc-level').val(pc.level);
-		$content.find('#pc-armor_class').val(pc.armor_class);
-		$content.find('#pc-hit_points').val(pc.hit_points);
-		$content.find('#pc-speed').val(pc.speed);
-		$content.find('#pc-passive_perception').val(pc.passive_perception);
-		$content.find('#pc-desc').val(pc.desc);
-	}
-	var buttons = [];
-	buttons.push({
-		label: 'Cancel',
-		onclick: function () {
-			this.close();
-		}
-	});
-	if (pc) {
-		buttons.push({
-			label: 'Delete',
-			class: 'button button-danger',
-			onclick: function () {
-				delete CAMPAIGN.pcs[pc.id];
-				render_pcs_list($('#campaign-pcs-list'), CAMPAIGN.pcs);
-				$('#campaign-pcs-preview').empty();
-				this.close();
-			}
-		});
-	}
-	buttons.push({
-		label: pc ? 'Edit' : 'Add',
-		class: 'button button-primary',
-		onclick: function () {
-			var name = $content.find('#pc-name').val().trim();
-			if (!name || name === '') {
-				open_dialog({ title: 'Warning', content: 'Invalid name.' });
-				return;
-			}
-			var level = parseInt($content.find('#pc-level').val(), 10);
-			if (!level || isNaN(level) || level <= 0) {
-				open_dialog({ title: 'Warning', content: 'Invalid level.' });
-				return;
-			}
-			var armor_class = parseInt($content.find('#pc-armor_class').val(), 10);
-			if (!armor_class || isNaN(armor_class) || armor_class <= 0) {
-				open_dialog({ title: 'Warning', content: 'Invalid armor class.' });
-				return;
-			}
-			var hit_points = parseInt($content.find('#pc-hit_points').val(), 10);
-			if (!hit_points || isNaN(hit_points) || hit_points <= 0) {
-				open_dialog({ title: 'Warning', content: 'Invalid hit points.' });
-				return;
-			}
-			var speed = parseInt($content.find('#pc-speed').val(), 10);
-			if (!speed || isNaN(speed) || speed < 0) {
-				open_dialog({ title: 'Warning', content: 'Invalid speed.' });
-				return;
-			}
-			var passive_perception = parseInt($content.find('#pc-passive_perception').val(), 10);
-			if (!passive_perception || isNaN(passive_perception) || passive_perception < 0) {
-				open_dialog({ title: 'Warning', content: 'Invalid passive perception.' });
-				return;
-			}
-			var desc = $content.find('#pc-desc').val().trim();
-			if (!desc || desc === '') {
-				open_dialog({ title: 'Warning', content: 'Invalid description.' });
-				return;
-			}
-			var new_pc = {
-				id: pc ? pc.id : random_id(),
-				name: name,
-				level: level,
-				armor_class: armor_class,
-				hit_points: hit_points,
-				speed: speed,
-				passive_perception: passive_perception,
-				desc: desc
-			}
-			CAMPAIGN.pcs[new_pc.id] = new_pc;
-			render_pcs_list($('#campaign-pcs-list'), CAMPAIGN.pcs);
-			$('#campaign-pcs-preview').empty();
-			this.close();
-		}
-	});
-	open_dialog({
-		title: pc ? 'Edit Player Character' : 'Add Player Character',
-		content: $content,
-		buttons: buttons
-	});
-};
-
-var render_encounters_list = function ($list_block, set) {
-	$list_block.empty();
-	if (!set) {
-		set = CAMPAIGN.encounters;
-	}
-	Object.keys(set).sort(function (a, b) {
-		return set[a].name < set[b].name ? -1 : 1;
-	}).forEach(function (encounter_id) {
-		var encounter = set[encounter_id];
-		if (encounter) {
-			$list_block.append(
-				'<li data-encounter="' + encounter_id + '">' +
-					'<div class="font-big">' + html_encode(encounter.name || '-') + '</div>' +
-					'<div class="font-small font-gray font-italic">' + html_encode(encounter.xp ? encounter.xp + ' XP' : '-') + '</div>' +
-				'</li>');
-		}
-	});
-};
-
-var render_encounter_preview = function ($preview, encounter_id, encounter_object) {
-	var encounter;
-	if (encounter_id) {
-		encounter = CAMPAIGN.encounters[encounter_id];
-	} else if (encounter_object) {
-		encounter = encounter_object;
-	}
-	if (encounter && $preview) {
-		$preview.empty();
-		$preview.append(
-			'<div class="flex-row">' +
-				'<button data-action="edit-encounter" data-encounter="' + encounter.id + '" class="button">Edit</button>' +
-			'</div>' +
-			'<h2 class="h2 h2-dnd">' + html_encode(encounter.name || '-') + '</h2>' +
-			'<p class="p">' + html_encode(encounter.desc ? encounter.desc.replace(/\r\n/g, '<br>').replace(/\r/g, '<br>').replace(/\n/g, '<br>') : '-') + '</p>');
-		$preview.append('<h3 class="h3 h3-dnd">Allies</h3>');
-		var $allies = $('<ol class="list"></ol>');
-		encounter.allies.sort(function (a, b) {
-			if (a.type !== b.type) {
-				return a.type === 'pc' ? -1 : 1;
-			} else {
-				return a.id < b.id ? -1 : 1;
-			}
-		}).forEach(function (ally) {
-			var name;
-			if (ally.type === 'pc') {
-				var pc = CAMPAIGN.pcs[ally.id];
-				if (pc) {
-					name = pc.name;
-				}
-			} else if (ally.type === 'npc') {
-				var npc = CAMPAIGN.npcs[ally.id];
-				if (npc) {
-					name = npc.name;
-				}
-			}
-			if (name) {
-				$allies.append('<li class="message ' + (ally.type === 'pc' ? 'message-teal-inverted' : 'message-green-inverted') + '" style="margin: 0">' + html_encode(name) + '</li>');
-			}
-		});
-		$preview.append($allies);
-		$preview.append('<h3 class="h3 h3-dnd">Enemies</h3>');
-		var $enemies = $('<ol class="list"></ol>');
-		encounter.enemies.sort(function (a, b) {
-			if (a.type !== b.type) {
-				return a.type === 'npc' ? -1 : 1;
-			} else {
-				return a.id < b.id ? -1 : 1;
-			}
-		}).forEach(function (enemy) {
-			var name;
-			 if (enemy.type === 'npc') {
-				var npc = CAMPAIGN.npcs[enemy.id];
-				if (npc) {
-					name = npc.name;
-				}
-			} else if (enemy.type === 'monster') {
-				var monster = DND5_MONSTERS[enemy.id];
-				if (monster) {
-					name = monster.name;
-				}
-			}
-			if (name) {
-				$enemies.append('<li class="message message-red-inverted" style="margin: 0">' + html_encode(name) + '</li>');
-			}
-		});
-		$preview.append($enemies);
-	}
-};
-
-var edit_encounter_dialog = function (encounter) {
-	var $content = $(
-		'<div class="form">' +
-			'<div class="form-field">' +
-				'<label for="encounter-name">Name</label>' +
-				'<input id="encounter-name" type="text" class="input">' +
-			'</div>' +
-			'<div class="form-field">' +
-				'<label for="encounter-desc">Description</label>' +
-				'<textarea id="encounter-desc" rows="10" class="input"></textarea>' +
-			'</div>' +
-		'</div>');
-	if (encounter) {
-		$content.find('#encounter-name').val(encounter.name);
-		$content.find('#encounter-desc').val(encounter.desc);
-	}
-	var buttons = [];
-	buttons.push({
-		label: 'Cancel',
-		onclick: function () {
-			this.close();
-		}
-	});
-	if (encounter) {
-		buttons.push({
-			label: 'Delete',
-			class: 'button button-danger',
-			onclick: function () {
-				delete CAMPAIGN.encounters[encounter.id];
-				render_encounters_list($('#campaign-encounters-list'), CAMPAIGN.encounters);
-				$('#campaign-encounters-preview').empty();
-				this.close();
-			}
-		});
-	}
-	buttons.push({
-		label: encounter ? 'Edit' : 'Add',
-		class: 'button button-primary',
-		onclick: function () {
-			var name = $content.find('#encounter-name').val().trim();
-			if (!name || name === '') {
-				open_dialog({ title: 'Warning', content: 'Invalid name.' });
-				return;
-			}
-			var desc = $content.find('#encounter-desc').val().trim();
-			if (!desc || desc === '') {
-				open_dialog({ title: 'Warning', content: 'Invalid description.' });
-				return;
-			}
-			var new_encounter = {
-				id: encounter ? encounter.id : random_id(),
-				name: name,
-				desc: desc,
-				allies: [],
-				enemies: []
-			}
-			CAMPAIGN.encounters[new_encounter.id] = new_encounter;
-			render_encounters_list($('#campaign-encounters-list'), CAMPAIGN.encounters);
-			$('#campaign-encounters-preview').empty();
-			this.close();
-		}
-	});
-	open_dialog({
-		title: encounter ? 'Edit Encounter' : 'Add Encounter',
-		content: $content,
-		buttons: buttons
 	});
 };
 
@@ -1193,99 +904,7 @@ var edit_note_dialog = function (note) {
 };
 
 window.CAMPAIGN = {
-	pcs: {},
-	npcs: {},
-	encounters: {},
-	items: {},
-	documents: {},
-	notes: {}
-};
-
-window.CAMPAIGN = {
-	pcs: {
-		'uliara': {
-			id: 'uliara',
-			name: 'Uliara Coffersmith',
-			desc: 'Umano Druido',
-			level: 6,
-			armor_class: 10,
-			hit_points: 1,
-			speed: 30,
-			passive_perception: 10
-		},
-		'akra': {
-			id: 'akra',
-			name: 'Akra',
-			desc: 'Dragonide Monaco',
-			level: 6,
-			armor_class: 10,
-			hit_points: 1,
-			speed: 30,
-			passive_perception: 10
-		},
-		'heka': {
-			id: 'heka',
-			name: 'Heka',
-			desc: 'Tiefling Warlock',
-			level: 6,
-			armor_class: 10,
-			hit_points: 1,
-			speed: 30,
-			passive_perception: 10
-		},
-		'arya': {
-			id: 'arya',
-			name: 'Arya',
-			desc: 'Elfo Ranger',
-			level: 6,
-			armor_class: 10,
-			hit_points: 1,
-			speed: 30,
-			passive_perception: 10
-		},
-		'al_natih': {
-			id: 'al_natih',
-			name: 'Al Natih',
-			desc: 'Minotauro Paladino',
-			level: 6,
-			armor_class: 10,
-			hit_points: 1,
-			speed: 30,
-			passive_perception: 10
-		}
-	},
-	npcs: {
-		'thana': {
-			id: 'thana',
-			name: 'Thana',
-			desc: 'Kitsune Ranger'
-		},
-		'thromok': {
-			id: 'thromok',
-			name: 'Thromok',
-			desc: 'Wurm colossale'
-		}
-	},
-	encounters: {
-		'showdown': {
-			id: 'showdown',
-			name: 'Showdown',
-			desc: 'Incontro di test',
-			allies: [
-				{ type: 'pc', id: 'uliara' },
-				{ type: 'pc', id: 'akra' },
-				{ type: 'pc', id: 'heka' },
-				{ type: 'pc', id: 'arya' },
-				{ type: 'pc', id: 'al_natih' },
-				{ type: 'npc', id: 'thana' }
-			],
-			enemies: [
-				{ type: 'npc', id: 'thromok' },
-				{ type: 'monster', id: 'bulette' },
-				{ type: 'monster', id: 'bulette' }
-			]
-		}
-	},
+	characters: {},
 	items: {},
 	documents: {},
 	notes: {}
@@ -1304,18 +923,6 @@ $('body').on('click', '[data-page]', function () {
 		var blob = new Blob([JSON.stringify(window.CAMPAIGN)], { type: 'application/json;charset=UTF-8', encoding: 'UTF-8' });
 		saveAs(blob, 'campaign.json');
 
-	} else if (action === 'add-pc') {
-
-		edit_pc_dialog();
-
-	} else if (action === 'edit-pc') {
-
-		var pc_id = $(this).data('pc').toString(),
-			pc = CAMPAIGN.pcs[pc_id];
-		if (pc) {
-			edit_pc_dialog(pc);
-		}
-
 	} else if (action === 'add-monster') {
 
 		edit_monster_dialog();
@@ -1323,21 +930,9 @@ $('body').on('click', '[data-page]', function () {
 	} else if (action === 'edit-monster') {
 
 		var monster_id = $(this).data('monster').toString(),
-			monster = CAMPAIGN.npcs[monster_id];
+			monster = CAMPAIGN.characters[monster_id];
 		if (monster) {
 			edit_monster_dialog(monster);
-		}
-
-	} else if (action === 'add-encounter') {
-
-		edit_encounter_dialog();
-
-	} else if (action === 'edit-encounter') {
-
-		var encounter_id = $(this).data('encounter').toString(),
-			encounter = CAMPAIGN.encounters[encounter_id];
-		if (encounter) {
-			edit_encounter_dialog(encounter);
 		}
 
 	} else if (action === 'add-item') {
@@ -1429,9 +1024,7 @@ $('#campaign-document-input').on('change', function () {
 });
 
 var render_campaign = function () {
-	render_pcs_list($('#campaign-pcs-list'), CAMPAIGN.pcs);
-	render_monsters_list($('#campaign-monsters-list'), CAMPAIGN.npcs);
-	render_encounters_list($('#campaign-encounters-list'), CAMPAIGN.encounters);
+	render_monsters_list($('#campaign-monsters-list'), CAMPAIGN.characters);
 	render_items_list($('#campaign-items-list'), CAMPAIGN.items);
 	render_documents_list($('#campaign-documents-list'), CAMPAIGN.documents);
 	render_notes_list($('#campaign-notes-list'), CAMPAIGN.notes);
@@ -1476,19 +1069,9 @@ $compendium_items_list.on('click', 'li', function () {
 	render_item_preview($('#compendium-items-preview'), null, item);
 });
 
-$('#campaign-pcs-list').on('click', 'li', function () {
-	var pc_id = $(this).data('pc').toString();
-	render_pc_preview($('#campaign-pcs-preview'), pc_id);
-});
-
 $('#campaign-monsters-list').on('click', 'li', function () {
 	var monster_id = $(this).data('monster').toString();
 	render_monster_preview($('#campaign-monsters-preview'), monster_id);
-});
-
-$('#campaign-encounters-list').on('click', 'li', function () {
-	var encounter_id = $(this).data('encounter').toString();
-	render_encounter_preview($('#campaign-encounters-preview'), encounter_id);
 });
 
 $('#campaign-items-list').on('click', 'li', function () {

@@ -15,20 +15,6 @@
 			</div>
 			<div class="aside-overflow">
 				<div class="aside-section">
-					<h3 class="aside-heading">Campaign</h3>
-					<ol class="aside-list">
-						<li data-action="import" class="aside-list-item">Import</li>
-						<input id="campaign-import-input" type="file" accept="application/json,.json" hidden>
-						<li data-action="export" class="aside-list-item">Export</li>
-						<li data-page="campaign-pcs" class="aside-list-item">Player Characters</li>
-						<li data-page="campaign-monsters" class="aside-list-item">Non Player Characters</li>
-						<li data-page="campaign-encounters" class="aside-list-item">Encounters</li>
-						<li data-page="campaign-items" class="aside-list-item">Items</li>
-						<li data-page="campaign-documents" class="aside-list-item">Documents</li>
-						<li data-page="campaign-notes" class="aside-list-item">Notes</li>
-					</ol>
-				</div>
-				<div class="aside-section">
 					<h3 class="aside-heading">Compendium</h3>
 					<ol class="aside-list">
 						<li data-page="compendium-monsters" class="aside-list-item">Monsters</li>
@@ -36,19 +22,28 @@
 						<li data-page="compendium-items" class="aside-list-item">Magic Items</li>
 					</ol>
 				</div>
-				<!--
 				<div class="aside-section">
 					<h3 class="aside-heading">Tools</h3>
 					<ol class="aside-list">
-						<li data-page="diceroller" class="aside-list-item">Dice Roller</li>
-						<li data-page="randomname" class="aside-list-item">Random Character Name</li>
-						<li data-page="pointbuy" class="aside-list-item">Ability Scores Point Buy</li>
-						<li data-page="dungeondesigner" class="aside-list-item">Dungeon Designer</li>
-						<li data-page="individualtreasure" class="aside-list-item">Individual Treasure</li>
-						<li data-page="treasurehoard" class="aside-list-item">Treasure Hoard</li>
+						<li data-page="tools-dice" class="aside-list-item">Dice Roller</li>
+						<li data-page="tools-name" class="aside-list-item">Random Character Name</li>
+						<li data-page="tools-dungeon" class="aside-list-item">Dungeon Designer</li>
+						<li data-page="tools-drop" class="aside-list-item">Individual Treasure</li>
+						<li data-page="tools-hoard" class="aside-list-item">Treasure Hoard</li>
 					</ol>
 				</div>
-				-->
+				<div class="aside-section">
+					<h3 class="aside-heading">Campaign</h3>
+					<ol class="aside-list">
+						<li data-action="import" class="aside-list-item">Import</li>
+						<input id="campaign-import-input" type="file" accept="application/json,.json" hidden>
+						<li data-action="export" class="aside-list-item">Export</li>
+						<li data-page="campaign-monsters" class="aside-list-item">Characters</li>
+						<li data-page="campaign-items" class="aside-list-item">Items</li>
+						<li data-page="campaign-documents" class="aside-list-item">Documents</li>
+						<li data-page="campaign-notes" class="aside-list-item">Notes</li>
+					</ol>
+				</div>
 			</div>
 		</div>
 		<div class="header">&nbsp;</div>
@@ -113,16 +108,24 @@
 				<div id="compendium-items-preview" class="column"></div>
 			</div>
 
-			<div data-page-id="campaign-pcs" class="page columns" style="display: none">
-				<div class="column flex-column">
-					<div class="flex-row flex-row-margins">
-						<button data-action="add-pc" class="button">Add</button>
-					</div>
-					<div class="flex-1" style="overflow: auto">
-						<ol id="campaign-pcs-list" class="list list-hover"></ol>
-					</div>
-				</div>
-				<div id="campaign-pcs-preview" class="column"></div>
+			<div data-page-id="tools-dice" class="page" style="display: none">
+				<!-- TODO -->
+			</div>
+
+			<div data-page-id="tools-name" class="page" style="display: none">
+				<!-- TODO -->
+			</div>
+
+			<div data-page-id="tools-dungeon" class="page" style="display: none">
+				<!-- TODO -->
+			</div>
+
+			<div data-page-id="tools-drop" class="page" style="display: none">
+				<!-- TODO -->
+			</div>
+
+			<div data-page-id="tools-hoard" class="page" style="display: none">
+				<!-- TODO -->
 			</div>
 
 			<div data-page-id="campaign-monsters" class="page columns" style="display: none">
@@ -135,18 +138,6 @@
 					</div>
 				</div>
 				<div id="campaign-monsters-preview" class="column"></div>
-			</div>
-
-			<div data-page-id="campaign-encounters" class="page columns" style="display: none">
-				<div class="column flex-column">
-					<div class="flex-row flex-row-margins">
-						<button data-action="add-encounter" class="button">Add</button>
-					</div>
-					<div class="flex-1" style="overflow: auto">
-						<ol id="campaign-encounters-list" class="list list-hover"></ol>
-					</div>
-				</div>
-				<div id="campaign-encounters-preview" class="column"></div>
 			</div>
 
 			<div data-page-id="campaign-items" class="page columns" style="display: none">
@@ -232,6 +223,7 @@
 	<script src="js/dnd5_monsters.js"></script>
 	<script src="js/dnd5_spells.js"></script>
 	<script src="js/dnd5_items.js"></script>
+	<script src="js/dnd5.js"></script>
 	<script src="js/main.js"></script>
 </body>
 </html>
