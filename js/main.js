@@ -789,13 +789,13 @@ var render_document_preview = function ($preview, document_id, document_object) 
 		$preview.empty();
 		$preview.append(
 			'<div class="flex-row">' +
+				'<button data-action="download-document" data-document="' + doc.id + '" class="button">Download</button>' +
+				'<button data-action="datauri-document" data-document="' + doc.id + '" class="button">Data URI</button>' +
 				'<button data-action="delete-document" data-document="' + doc.id + '" class="button button-danger">Delete</button>' +
 			'</div>' +
 			'<h2 class="h2 h2-dnd">' + html_encode(doc.name || '-') + '</h2>');
 		if (doc.type.indexOf('image/') !== -1) {
-			$preview.append('<img src="' + doc.data + '">');
-		} else {
-			$preview.append('<a href="' + doc.data + '" download="' + html_encode(doc.name || '-') + '" class="a">DOWNLOAD</a>');
+			$preview.append('<img src="' + doc.data + '" style="max-width: 100%">');
 		}
 	}
 };
@@ -950,6 +950,45 @@ $('body').on('click', '[data-page]', function () {
 	} else if (action === 'add-document') {
 
 		$('#campaign-document-input').click();
+
+	} else if (action === 'download-document') {
+
+		var document_id = $(this).data('document').toString(),
+			doc = CAMPAIGN.documents[document_id];
+		if (doc) {
+			/*
+			var byte_string = atob(doc.data.split(',')[1]),
+				mime_string = doc.data.split(',')[0].split(':')[1].split(';')[0],
+				ab = new ArrayBuffer(byte_string.length),
+				ia = new Uint8Array(ab);
+			for (var i = 0; i < byte_string.length; i++) {
+				ia[i] = byte_string.charCodeAt(i);
+			}
+			var blob = new Blob([ab], { type: mime_string }),
+				url = window.URL.createObjectURL(blob),
+				a = document.createElement('a');
+			a.style.display = 'none';
+			a.href = url;
+			a.download = doc.name;
+			document.body.appendChild(a);
+			a.click();
+			window.URL.revokeObjectURL(url);
+			*/
+			var a = document.createElement('a');
+			a.style.display = 'none';
+			a.href = doc.data;
+			a.download = doc.name;
+			document.body.appendChild(a);
+			a.click();
+		}
+
+	} else if (action === 'datauri-document') {
+
+		var document_id = $(this).data('document').toString(),
+			doc = CAMPAIGN.documents[document_id];
+		if (doc) {
+			navigator.clipboard.writeText(doc.data);
+		}
 
 	} else if (action === 'delete-document') {
 
